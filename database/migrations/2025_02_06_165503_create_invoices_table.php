@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('quantity');
 
             $table->float('discount');
-            $table->enum('disocunt_type', [DiscountType::FIXED->value, DiscountType::PERCENTAGE->value]);
+            $table->enum('discount_type', [DiscountType::FIXED->value, DiscountType::PERCENTAGE->value]);
 
             $table->float('subtotal');
 

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enum\PermissionsType;
+use App\Models\SystemSetting;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +39,11 @@ class FirstSetup extends Command
         $this->call('config:cache');
 
         $this->info('Setup process completed');
+
+        SystemSetting::create([
+                'id' => 1,
+                'Title' => 'laundary'
+            ]);
 
         $role = Role::create(['name' => 'Manager']);
 

@@ -2,23 +2,23 @@
     <!-- LOGO -->
     <div class="navbar-brand-box py-2">
         <!-- Dark Logo-->
-        {{-- <a href="{{ route('dashboard.index') }}" class="logo logo-dark">
+        <a href="{{ route('dashboard.index') }}" class="logo logo-dark">
             <span class="logo-sm">
-                <img src="{{ asset('storage/'. $website_settings->logo) }}" alt="" height="40">
+                <img src="{{ asset($settings->logo) }}" alt="" height="40">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('storage/'. $website_settings->logo) }}" alt="" height="70">
+                <img src="{{ asset($settings->logo) }}" alt="" height="70">
             </span>
         </a>
         <!-- Light Logo-->
         <a href="{{ route('dashboard.index') }}" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ asset('storage/'. $website_settings->logo) }}" alt="" height="40">
+                <img src="{{ asset($settings->logo) }}" alt="" height="40">
             </span>
             <span class="logo-lg">
-                <img src="{{ asset('storage/'. $website_settings->logo) }}" alt="" height="70">
+                <img src="{{ asset($settings->logo) }}" alt="" height="70">
             </span>
-        </a> --}}
+        </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
             <i class="ri-record-circle-line"></i>
         </button>
@@ -41,6 +41,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link menu-link {{ Route::currentRouteName() ==  'dashboard.invoices.index' ? 'active' : ''}}" href="{{ route('dashboard.invoices.index') }}" role="button">
+                        <i class="ri-shopping-basket-2-line"></i> <span>@lang('dashboard.invoices')</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link menu-link {{ Route::currentRouteName() ==  'dashboard.clients.index' ? 'active' : ''}}" href="{{ route('dashboard.clients.index') }}" role="button">
                         <i class="ri-shake-hands-fill"></i> <span>@lang('dashboard.clients')</span>
                     </a>
@@ -53,6 +58,11 @@
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ Route::currentRouteName() ==  'dashboard.roles.index' ? 'active' : ''}}" href="{{ route('dashboard.roles.index') }}" role="button">
                         <i class="ri-key-2-fill"></i> <span>@lang('dashboard.roles')</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ Route::currentRouteName() ==  'dashboard.system_settings.edit' ? 'active' : ''}}" href="{{ route('dashboard.system_settings.edit', 1) }}" role="button">
+                        <i class="ri-tools-fill"></i> <span>@lang('dashboard.system_settings')</span>
                     </a>
                 </li>
             </ul>
