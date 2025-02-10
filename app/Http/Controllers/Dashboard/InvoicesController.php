@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Dashboard;
 
+use App\Enum\DiscountType;
 use App\enum\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoicesController extends Controller implements HasMiddleware
@@ -59,7 +62,7 @@ class InvoicesController extends Controller implements HasMiddleware
             ->addColumn('client', function(Invoice $invoice){
                 return $invoice->client->name;
             })
-            ->addColumn('client', function(Invoice $invoice){
+            ->addColumn('service', function(Invoice $invoice){
                 return $invoice->service->title;
             })
             ->addColumn('total', function(Invoice $invoice){
@@ -68,10 +71,10 @@ class InvoicesController extends Controller implements HasMiddleware
             ->editColumn('status', function(Invoice $invoice){
                 return match($invoice->status)
                 {
-                    InvoiceStatus::PAID => "<span class='badge badge-success'>". _('dashboard.paid') ."</span>",
-                    InvoiceStatus::UNPAID => "<span class='badge badge-secondary'>". _('dashboard.unpaid') ."</span>",
-                    InvoiceStatus::PARTIALLY_PAID => "<span class='badge badge-warning'>". _('dashboard.partially_paid') ."</span>",
-                    InvoiceStatus::CANCELED => "<span class='badge badge-danger'>". _('dashboard.canceled') ."</span>",
+                    InvoiceStatus::PAID->value => "<span class='badge bg-success'>". _('dashboard.paid') ."</span>",
+                    InvoiceStatus::UNPAID->value => "<span class='badge bg-secondary'>". _('dashboard.unpaid') ."</span>",
+                    InvoiceStatus::PARTIALLY_PAID->value => "<span class='badge bg-warning'>". _('dashboard.partially_paid') ."</span>",
+                    InvoiceStatus::CANCELED->value => "<span class='badge bg-danger'>". _('dashboard.canceled') ."</span>",
                 };
             })
             ->rawColumns(['status', 'action'])
@@ -93,7 +96,24 @@ class InvoicesController extends Controller implements HasMiddleware
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'service_id' => 'required|exists:services,id',
+            'quantity' => 'required|integer|min:0',
+            'discount' => 'required|numeric|min:0',
+            'discount_type' => ['required', Rule::in(DiscountType::FIXED->value, DiscountType::PERCENTAGE->value)],
+            'due_date' => ['required', 'date'],
+        ]);
+
+        $service = Service::find($data['service_id']);
+
+        $data['due_date'] = date("Y-m-d", strtotime($data['due_date']));
+        $data['subtotal'] = $service->price * $data['quantity'];
+        $data['status'] = InvoiceStatus::UNPAID->value;
+
+        $invoice = Invoice::create($data);
+        
+        return response()->json(['redirectUrl' => route('dashboard.invoices.edit', $invoice)]);
     }
 
     /**

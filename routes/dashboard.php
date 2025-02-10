@@ -1,5 +1,6 @@
 <?php
 
+use App\helper\select2;
 use App\Http\Controllers\Dashboard\{ClientsController, HomeController, InvoicesController, RolesController, ServicesController, SystemSettings, SystemSettingsController, UsersController};
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
@@ -15,5 +16,11 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
         Route::resource('users', UsersController::class)->except('show');
         Route::resource('roles', RolesController::class)->except('show');
         Route::resource('system_settings', SystemSettingsController::class)->only(['edit', 'update']);
+
+        // Select 2
+        Route::prefix('/select2')->name('select2.')->group(function(){
+            Route::get('/clients', [select2::class, 'clients'])->name('clients');
+            Route::get('/services', [select2::class, 'services'])->name('services');
+        });
     });
 });

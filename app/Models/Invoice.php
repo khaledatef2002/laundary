@@ -9,6 +9,24 @@ class Invoice extends Model
 {
     protected $guarded = ['id', 'invoice_number'];
 
+    protected $appends = ['discount_amount', 'total_amount'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($invoice){
+            $invoice->invoice_number = static::generateInvoiceNumber();
+        });
+    }
+
+    private static function generateInvoiceNumber()
+    {
+        $latestInvoice = static::latest()->first();
+        $number = $latestInvoice ? ((int)substr($latestInvoice->invoice_number, -6)) + 1 : 1;
+        return 'INV-' . str_pad($number, 6, '0', STR_PAD_LEFT);
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class);
@@ -28,12 +46,12 @@ class Invoice extends Model
     {
         if($this->discount_type == DiscountType::FIXED)
         {
-            return max($this->discount, $this->subtotal);
+            return min($this->discount, $this->subtotal);
         }
         else
         {
             $discount = round(($this->discount * $this->subtotal) / 100, 2);
-            return max($discount, $this->subtotal);
+            return min($discount, $this->subtotal);
         }
     }
 
