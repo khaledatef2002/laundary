@@ -40,7 +40,7 @@
                             <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
                             <div class="d-flex gap-2">
                                 <input type="number" step="1" min="0" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
-                                <p class="mb-0 d-flex align-items-center fw-bold fs-4">50</p>
+                                <p id="subtotal" data-price="0" class="mb-0 d-flex align-items-center fw-bold fs-4">0</p>
                             </div>
                         </div>
                     </div>
@@ -82,29 +82,29 @@
     <script>
         $(document).ready(function() {
             $('select[name="client_id"]').select2({
-                placeholder: "@lang('dashboard.select.choose-option')",
-                ajax: {
-                    url: '{{ route("dashboard.select2.clients") }}', // Route to fetch users
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return {
-                            q: params.term // Search term
-                        };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.map(function(client) {
-                                return {
-                                    id: client.id,
-                                    text: client.name
-                                };
-                            })
-                        };
-                    },
-                    cache: true
+            placeholder: "@lang('dashboard.select.choose-option')",
+            ajax: {
+                url: '{{ route("dashboard.select2.clients") }}', // Route to fetch users
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                return {
+                    q: params.term // Search term
+                };
                 },
-                minimumInputLength: 0 // Require at least 1 character to start searching
+                processResults: function (data) {
+                return {
+                    results: data.map(function(client) {
+                    return {
+                        id: client.id,
+                        text: client.name
+                    };
+                    })
+                };
+                },
+                cache: true
+            },
+            minimumInputLength: 0 // Require at least 1 character to start searching
             });
             $('select[name="service_id"]').select2({
                 placeholder: "@lang('dashboard.select.choose-option')",
@@ -113,24 +113,42 @@
                     dataType: 'json',
                     delay: 250,
                     data: function (params) {
-                        return {
-                            q: params.term // Search term
-                        };
+                    return {
+                        q: params.term // Search term
+                    };
                     },
                     processResults: function (data) {
+                    return {
+                        results: data.map(function(service) {
                         return {
-                            results: data.map(function(service) {
-                                return {
-                                    id: service.id,
-                                    text: service.title
-                                };
-                            })
+                            id: service.id,
+                            text: service.title,
+                            price: service.price
                         };
+                        })
+                    };
                     },
                     cache: true
                 },
                 minimumInputLength: 0 // Require at least 1 character to start searching
+            }).on('select2:select', function (e) {
+                const data = e.params.data;
+                const price =  data.price
+
+                $("p#subtotal").attr("data-price", price)
+
+                check_sub_total()
             });
         })
+
+        $("input[name='quantity']").keyup(() => check_sub_total())
+
+        function check_sub_total()
+        {
+            const subtotal = $("p#subtotal")
+            const price = Number(subtotal.attr("data-price"))
+            const quantity = Number($("input[name='quantity']").val() ?? 0)
+            subtotal.text(price * quantity)
+        }
     </script>
 @endsection

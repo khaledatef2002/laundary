@@ -6,8 +6,8 @@
     <meta content="Themesbrand" name="author" />
     <!-- App favicon -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-{{-- 
-    <link rel="shortcut icon" href="{{ asset('storage/'. $website_settings->logo) }}"> --}}
+
+    <link rel="shortcut icon" href="{{ asset($settings->logo) }}">
 
     <!-- jsvectormap css -->
     <link href="{{ asset('back') }}/libs/jsvectormap/css/jsvectormap.min.css" rel="stylesheet" type="text/css" />

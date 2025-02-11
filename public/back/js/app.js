@@ -1088,10 +1088,10 @@ File: Main Js File
 		var splitItem = "";
 
 		Array.from(menuData).forEach(function (item, index) {
-			if (index + 1 === splitMenu) {
+			if (index + 1 === splitMenu - 1) {
 				splitItem = item;
 			}
-			if (index + 1 > splitMenu) {
+			if (index + 1 > splitMenu - 1) {
 				newMenus += item.outerHTML;
 				item.remove();
 			}
