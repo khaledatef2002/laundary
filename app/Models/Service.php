@@ -13,9 +13,4 @@ class Service extends Model implements TranslatableContract
     public $translatedAttributes = ['title'];
 
     protected $guarded = ['id'];
-
-    public function invoices()
-    {
-        return $this->hasMany(Invoice::class);
-    }
 }

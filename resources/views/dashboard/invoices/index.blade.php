@@ -24,7 +24,6 @@
                 <tr class="table-dark">
                     <th>@lang('dashboard.invoice_number')</th>
                     <th>@lang('dashboard.client')</th>
-                    <th>@lang('dashboard.service')</th>
                     <th>@lang('dashboard.quantity')</th>
                     <th>@lang('dashboard.total')</th>
                     <th>@lang('dashboard.status')</th>
@@ -50,7 +49,6 @@
                 columns: [
                             { data: 'invoice_number', name: 'invoice_number' },
                             { data: 'client', name: 'client' },
-                            { data: 'service', name: 'service' },
                             { data: 'quantity', name: 'quantity' },
                             { data: 'total', name: 'total' }, 
                             { data: 'status', name: 'status' },

@@ -60,10 +60,7 @@ class InvoicesController extends Controller implements HasMiddleware
                 "</div>";
             })
             ->addColumn('client', function(Invoice $invoice){
-                return $invoice->client->name;
-            })
-            ->addColumn('service', function(Invoice $invoice){
-                return $invoice->service->title;
+                return "<a href='". route('dashboard.clients.edit', $invoice->client->id) ."'>" . $invoice->client->name . "</a>";
             })
             ->addColumn('total', function(Invoice $invoice){
                 return $invoice->total_amount;
@@ -77,7 +74,7 @@ class InvoicesController extends Controller implements HasMiddleware
                     InvoiceStatus::CANCELED->value => "<span class='badge bg-danger'>". _('dashboard.canceled') ."</span>",
                 };
             })
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['client', 'status', 'action'])
             ->make(true);
         }
         return view('dashboard.invoices.index');
@@ -98,17 +95,13 @@ class InvoicesController extends Controller implements HasMiddleware
     {
         $data = $request->validate([
             'client_id' => 'required|exists:clients,id',
-            'service_id' => 'required|exists:services,id',
-            'quantity' => 'required|integer|min:0',
+            'quantity' => 'required|integer|min:1',
             'discount' => 'required|numeric|min:0',
             'discount_type' => ['required', Rule::in(DiscountType::FIXED->value, DiscountType::PERCENTAGE->value)],
             'due_date' => ['required', 'date'],
         ]);
 
-        $service = Service::find($data['service_id']);
-
         $data['due_date'] = date("Y-m-d", strtotime($data['due_date']));
-        $data['subtotal'] = $service->price * $data['quantity'];
         $data['status'] = InvoiceStatus::UNPAID->value;
 
         $invoice = Invoice::create($data);
@@ -127,9 +120,9 @@ class InvoicesController extends Controller implements HasMiddleware
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Invoice $invoice)
     {
-        //
+        return view('dashboard.invoices.edit', compact('invoice'));
     }
 
     /**

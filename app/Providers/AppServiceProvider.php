@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\SystemSetting;
+use Exception;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,8 +22,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $settings = SystemSetting::first();
-
-        View::share('settings', $settings);
+        try
+        {
+            $settings = SystemSetting::first();
+    
+            View::share('settings', $settings);
+        }
+        catch(Exception $e)
+        {
+            View::share('settings', collect([]));
+        }
     }
 }

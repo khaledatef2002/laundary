@@ -28,40 +28,24 @@
                             <option></option>
                         </select>
                     </div>
-                    <div class="d-flex gap-2 mb-3">
-                        {{-- services --}}
-                        <div class="flex-fill">
-                            <label class="form-label" for="service_id">@lang('dashboard.service')</label>
-                            <select class="form-control" id="service_id" name="service_id">
-                                <option></option>
-                            </select>
-                        </div>
-                        <div class="flex-fill">
-                            <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" step="1" min="0" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
-                                <p id="subtotal" data-price="0" class="mb-0 d-flex align-items-center fw-bold fs-4">0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 mb-3">
-                        <div class="flex-fill">
-                            <label class="form-label" for="discount">@lang('dashboard.discount')</label>
-                            <input type="number" step="0.01" min="0" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
-                        </div>
-                        <div class="flex-fill">
-                            <label class="form-label" for="discount_type">@lang('dashboard.discount_type')</label>
-                            <select class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')">
-                                <option value="{{ App\Enum\DiscountType::FIXED->value }}">--@lang('dashboard.fixed')--</option>
-                                <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}">--@lang('dashboard.subtotal')--</option>
-                            </select>
-                        </div>
-                    </div>
                     <div>
                         <label class="form-label" for="due_date">@lang('dashboard.due_date')</label>
                         <input type="text" id="due_date" name="due_date" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y") }}">
                     </div>
-
+                </div>
+                <div class="px-3 my-4">
+                    <button class="btn btn-success ms-auto d-block" id="openAddServiceModal" type="button">Add +</button>
+                    <table id="services_table" class="w-100">
+                        <thead class="bg-dark text-white text-center">
+                            <tr>
+                                <th class="py-3">Service Name</th>
+                                <th class="py-3">Service Price</th>
+                                <th class="py-3">Service Quantity</th>
+                                <th class="py-3">Discount Amount</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
             <!-- end card -->
@@ -75,11 +59,72 @@
     </div>
 </form>
 
+<div class="modal" id="AddServiceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="service_id">@lang('dashboard.service')</label>
+                    <select class="form-control" id="service_id" name="service_id">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" step="1" min="1" value="1" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
+                    </div>
+                </div>
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="discount">@lang('dashboard.discount')</label>
+                    <input type="number" step="0.01" min="0" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
+                </div>
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="discount_type">@lang('dashboard.discount_type')</label>
+                    <select class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')">
+                        <option value="{{ App\Enum\DiscountType::FIXED->value }}">--@lang('dashboard.fixed')--</option>
+                        <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}">--@lang('dashboard.subtotal')--</option>
+                    </select>
+                </div>
+                <p class="mb-0 d-flex align-items-center fs-5">
+                    <span class="fw-bold">Total:</span> &nbsp;<span id="subtotal" data-price="0">0</span>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary save-add-new">Save & Add New</button>
+                <button type="button" class="btn btn-primary save">Save</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('custom-js')
     <script src="{{ asset('back/js/invoices.js') }}"></script>
     <script>
+        const AddServiceModal = new bootstrap.Modal('#AddServiceModal')
+
+        document.getElementById("openAddServiceModal").addEventListener('click', () => AddServiceModal.show())
+
+        document.getElementById("openAddServiceModal").addEventListener('shown.bs.modal', () => {
+
+        })
+
+        $("#services_table").DataTable({
+            lengthChange: false,
+            searching: false,
+            info: false,
+            columnDefs: [
+                {orderable: false, targets: -1}
+            ]
+        })
+
         $(document).ready(function() {
             $('select[name="client_id"]').select2({
             placeholder: "@lang('dashboard.select.choose-option')",
@@ -106,7 +151,7 @@
             },
             minimumInputLength: 0 // Require at least 1 character to start searching
             });
-            $('select[name="service_id"]').select2({
+            $('#AddServiceModal select[name="service_id"]').select2({
                 placeholder: "@lang('dashboard.select.choose-option')",
                 ajax: {
                     url: '{{ route("dashboard.select2.services") }}', // Route to fetch users
@@ -130,7 +175,8 @@
                     },
                     cache: true
                 },
-                minimumInputLength: 0 // Require at least 1 character to start searching
+                minimumInputLength: 0,
+                dropdownParent: document.getElementById('AddServiceModal')
             }).on('select2:select', function (e) {
                 const data = e.params.data;
                 const price =  data.price
@@ -139,6 +185,40 @@
 
                 check_sub_total()
             });
+
+            // $('select[name="service_id"]').select2({
+            //     placeholder: "@lang('dashboard.select.choose-option')",
+            //     ajax: {
+            //         url: '{{ route("dashboard.select2.services") }}', // Route to fetch users
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function (params) {
+            //         return {
+            //             q: params.term // Search term
+            //         };
+            //         },
+            //         processResults: function (data) {
+            //         return {
+            //             results: data.map(function(service) {
+            //             return {
+            //                 id: service.id,
+            //                 text: service.title,
+            //                 price: service.price
+            //             };
+            //             })
+            //         };
+            //         },
+            //         cache: true
+            //     },
+            //     minimumInputLength: 0 // Require at least 1 character to start searching
+            // }).on('select2:select', function (e) {
+            //     const data = e.params.data;
+            //     const price =  data.price
+
+            //     $("p#subtotal").attr("data-price", price)
+
+            //     check_sub_total()
+            // });
         })
 
         $("input[name='quantity']").keyup(() => check_sub_total())

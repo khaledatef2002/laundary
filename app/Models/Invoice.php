@@ -37,11 +37,16 @@ class Invoice extends Model
         return $this->hasMany(InvoicesPaymentHistory::class);
     }
 
-    public function service()
+    public function services()
     {
-        return $this->belongsTo(Service::class);
+        return $this->hasMany(InvoicesService::class);
     }
 
+    // To Do
+    public function getSubtotalAttribute()
+    {
+        return $this->invoiceServices->sum('total_amount');
+    }
     public function getDiscountAmountAttribute()
     {
         if($this->discount_type == DiscountType::FIXED)
