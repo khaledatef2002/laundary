@@ -11,7 +11,10 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
     Route::middleware(['auth'])->group(function(){
         Route::get('/', [HomeController::class, 'index'])->name('index');
         Route::resource('services', ServicesController::class)->except('show');
+
         Route::resource('invoices', InvoicesController::class);
+        Route::post('/check-add-service', [InvoicesController::class, 'check_add_service']);
+
         Route::resource('clients', ClientsController::class)->except('show');
         Route::resource('users', UsersController::class)->except('show');
         Route::resource('roles', RolesController::class)->except('show');

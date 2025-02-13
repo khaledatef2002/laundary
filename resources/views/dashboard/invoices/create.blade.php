@@ -38,15 +38,20 @@
                     <table id="services_table" class="w-100">
                         <thead class="bg-dark text-white text-center">
                             <tr>
-                                <th class="py-3">Service Name</th>
-                                <th class="py-3">Service Price</th>
-                                <th class="py-3">Service Quantity</th>
-                                <th class="py-3">Discount Amount</th>
+                                <th class="py-3">Service</th>
+                                <th class="py-3">Price</th>
+                                <th class="py-3">Quantity</th>
+                                <th class="py-3">Discount</th>
+                                <th class="py-3">Subtotal</th>
                                 <th></th>
                             </tr>
                         </thead>
+                        <tbody class="text-center"></tbody>
                     </table>
                 </div>
+                <p class="d-block ms-auto me-3">
+                    <span class="fw-bold">Total: </span> <span id="total">0</span>
+                </p>
             </div>
             <!-- end card -->
         </div>
@@ -80,8 +85,14 @@
                     </div>
                 </div>
                 <div class="flex-fill mb-3">
+                    <label class="form-label" for="price">@lang('dashboard.price')</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" step="0.01" min="1" value="0" class="form-control" id="price" name="price" placeholder="@lang('dashboard.price')">
+                    </div>
+                </div>
+                <div class="flex-fill mb-3">
                     <label class="form-label" for="discount">@lang('dashboard.discount')</label>
-                    <input type="number" step="0.01" min="0" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
+                    <input type="number" step="0.01" min="0" value="0" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
                 </div>
                 <div class="flex-fill mb-3">
                     <label class="form-label" for="discount_type">@lang('dashboard.discount_type')</label>
@@ -90,8 +101,11 @@
                         <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}">--@lang('dashboard.subtotal')--</option>
                     </select>
                 </div>
-                <p class="mb-0 d-flex align-items-center fs-5">
-                    <span class="fw-bold">Total:</span> &nbsp;<span id="subtotal" data-price="0">0</span>
+                <p class="mb-0 d-flex align-items-center fs-6">
+                    <span class="fw-bold">Discount:</span> &nbsp;<span id="discount">0</span>
+                </p>
+                <p class="mb-0 d-flex align-items-center fs-6">
+                    <span class="fw-bold">Subtotal:</span> &nbsp;<span id="subtotal">0</span>
                 </p>
             </div>
             <div class="modal-footer">
@@ -108,15 +122,7 @@
 @section('custom-js')
     <script src="{{ asset('back/js/invoices.js') }}"></script>
     <script>
-        const AddServiceModal = new bootstrap.Modal('#AddServiceModal')
-
-        document.getElementById("openAddServiceModal").addEventListener('click', () => AddServiceModal.show())
-
-        document.getElementById("openAddServiceModal").addEventListener('shown.bs.modal', () => {
-
-        })
-
-        $("#services_table").DataTable({
+        const service_table = $("#services_table").DataTable({
             lengthChange: false,
             searching: false,
             info: false,
@@ -181,9 +187,9 @@
                 const data = e.params.data;
                 const price =  data.price
 
-                $("p#subtotal").attr("data-price", price)
+                $("#AddServiceModal input[name='price']").val(price)
 
-                check_sub_total()
+                calc_service()
             });
 
             // $('select[name="service_id"]').select2({

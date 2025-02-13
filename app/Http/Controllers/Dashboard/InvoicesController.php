@@ -140,4 +140,18 @@ class InvoicesController extends Controller implements HasMiddleware
     {
         //
     }
+
+    public function check_add_service(Request $request)
+    {
+        $request->validate([
+            'service_id' => ['required', 'exists:services,id'],
+            'quantity' => ['required', 'integer', 'min:1'],
+            'price' => ['required' , 'numeric', 'min:0'],
+            'discount' => ['numeric', 'min:0'],
+            'discount_type' => ['required', Rule::in(DiscountType::FIXED->value, DiscountType::PERCENTAGE->value)]
+        ]);
+
+
+        
+    }
 }
