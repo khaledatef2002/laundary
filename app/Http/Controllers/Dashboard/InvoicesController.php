@@ -6,6 +6,7 @@ use App\Enum\DiscountType;
 use App\enum\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\InvoicesService;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -68,6 +69,7 @@ class InvoicesController extends Controller implements HasMiddleware
             ->editColumn('status', function(Invoice $invoice){
                 return match($invoice->status)
                 {
+                    InvoiceStatus::DRAFT->value => "<span class='badge bg-dark'>". _('dashboard.draft') ."</span>",
                     InvoiceStatus::PAID->value => "<span class='badge bg-success'>". _('dashboard.paid') ."</span>",
                     InvoiceStatus::UNPAID->value => "<span class='badge bg-secondary'>". _('dashboard.unpaid') ."</span>",
                     InvoiceStatus::PARTIALLY_PAID->value => "<span class='badge bg-warning'>". _('dashboard.partially_paid') ."</span>",
@@ -95,16 +97,38 @@ class InvoicesController extends Controller implements HasMiddleware
     {
         $data = $request->validate([
             'client_id' => 'required|exists:clients,id',
-            'quantity' => 'required|integer|min:1',
             'discount' => 'required|numeric|min:0',
             'discount_type' => ['required', Rule::in(DiscountType::FIXED->value, DiscountType::PERCENTAGE->value)],
             'due_date' => ['required', 'date'],
+
+            'services' => ['required', 'array', 'min:1'],
+            'services.*.service_id' => ['required', 'exists:services,id'],
+            'services.*.price' => ['required', 'numeric', 'min:0'],
+            'services.*.quantity' => 'required|integer|min:1',
+            'services.*.discount' => 'required|numeric|min:0',
+            'services.*.discount_type' => ['required', Rule::in(DiscountType::FIXED->value, DiscountType::PERCENTAGE->value)],
         ]);
 
         $data['due_date'] = date("Y-m-d", strtotime($data['due_date']));
-        $data['status'] = InvoiceStatus::UNPAID->value;
+        $data['status'] = InvoiceStatus::DRAFT->value;
 
-        $invoice = Invoice::create($data);
+        $invoice = Invoice::create([
+            'client_id' => $data['client_id'],
+            'discount' => $data['discount'],
+            'discount_type' => $data['discount_type'],
+            'due_date' => $data['due_date']
+        ]);
+        
+        foreach ($data['services'] as $key => $service) {
+            InvoicesService::create([
+                'invoice_id' => $invoice->id,
+                'service_id' => $service['service_id'],
+                'quantity' => $service['quantity'],
+                'price' => $service['price'],
+                'discount' => $service['discount'],
+                'discount_type' => $service['discount_type']
+            ]);
+        }
         
         return response()->json(['redirectUrl' => route('dashboard.invoices.edit', $invoice)]);
     }

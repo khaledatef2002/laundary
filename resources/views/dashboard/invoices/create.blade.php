@@ -28,6 +28,19 @@
                             <option></option>
                         </select>
                     </div>
+                    <div class="mb-3 d-flex gap-2">
+                        <div class="flex-fill mb-3">
+                            <label class="form-label" for="discount">@lang('dashboard.discount')</label>
+                            <input oninput="calculate_total()" type="number" step="0.01" min="0" value="0" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
+                        </div>
+                        <div class="flex-fill mb-3">
+                            <label class="form-label" for="discount_type">@lang('dashboard.discount_type')</label>
+                            <select onchange="calculate_total()" class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')">
+                                <option value="{{ App\Enum\DiscountType::FIXED->value }}">--@lang('dashboard.fixed')--</option>
+                                <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}">--@lang('dashboard.percentage')--</option>
+                            </select>
+                        </div>
+                    </div>
                     <div>
                         <label class="form-label" for="due_date">@lang('dashboard.due_date')</label>
                         <input type="text" id="due_date" name="due_date" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y") }}">

@@ -18,7 +18,7 @@ class InvoicesService extends Model
     // calc discount
     public function getDiscountAmountAttribute()
     {
-        if($this->discount_type == DiscountType::FIXED)
+        if($this->discount_type == DiscountType::FIXED->value)
         {
             return min($this->discount, $this->subtotal);
         }

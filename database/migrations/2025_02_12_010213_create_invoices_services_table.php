@@ -15,6 +15,9 @@ return new class extends Migration
         Schema::create('invoices_services', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('invoice_id');
+            $table->foreign('invoice_id')->on('invoices')->references('id')->onDelete('cascade')->onUpdate('cascade');
+
             $table->unsignedBigInteger('service_id');
             $table->foreign('service_id')->on('services')->references('id')->onDelete('cascade')->onUpdate('cascade');
 

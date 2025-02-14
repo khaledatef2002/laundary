@@ -39,6 +39,29 @@ $("#create-invoice-form").submit(function(e){
     var submit_button = $(this).find("button[type='submit']")
     submit_button.prop("disabled", true)
 
+    service_table.rows().every(function(index){
+        const data = this.data()
+        const tempDiv = $("<div>").html(data[5])
+        const editIcon = tempDiv.find('.edit_service');
+
+        const serviceId = editIcon.data('service-id');
+        const discount = editIcon.data('discount');
+        const discountType = editIcon.data('discount-type');
+        const price = data[1]
+        const quantity = data[2]
+
+        const service = {
+            service_id: serviceId,
+            price, quantity, discount, discountType
+        }
+
+        formData.append(`services[${index}][service_id]`, serviceId);
+        formData.append(`services[${index}][price]`, price);
+        formData.append(`services[${index}][quantity]`, quantity);
+        formData.append(`services[${index}][discount]`, discount);
+        formData.append(`services[${index}][discount_type]`, discountType);
+    })
+
     $.ajax({
         url: "/dashboard/invoices",
         method: 'POST',
@@ -108,7 +131,7 @@ document.getElementById("openAddServiceModal").addEventListener('click', () => {
 
         $("#AddServiceModal input[name='price']").val(price)
 
-        calc_service()
+        calc_add_service()
     });
 
     AddServiceModal.show()
@@ -128,7 +151,7 @@ function clear_add_form()
     $("#AddServiceModal select[name='discount_type']").val("fixed")
 }
 
-function calc_discount_amount(discount_type, discount, price, quantity)
+function calc_discount_amount(discount_type, discount, price, quantity = 1)
 {
     let discount_amount = 0
 
@@ -307,7 +330,12 @@ function calculate_total()
         total += data[4];
     })
 
-    document.querySelector("span#total").innerText = total
+    const discount = $("#create-invoice-form input[name='discount']").val() ?? 0
+    const discount_type = $("#create-invoice-form select[name='discount_type']").val() ?? 'fixed'
+
+    const discount_amount = calc_discount_amount(discount_type, discount, total)
+
+    document.querySelector("span#total").innerText = total - discount_amount
 }
 
 $('#services_table tbody').on('click', '.edit_service', function () {
@@ -327,7 +355,7 @@ $('#services_table tbody').on('click', '.edit_service', function () {
 
         $("#EditServiceModal input[name='price']").val(price)
 
-        calc_service()
+        calc_edit_service()
     });
 
     const option = new Option(rowData[0], service_id, true, true);

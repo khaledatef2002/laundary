@@ -45,11 +45,18 @@ class Invoice extends Model
     // To Do
     public function getSubtotalAttribute()
     {
-        return $this->invoiceServices->sum('total_amount');
+        $total = 0;
+
+        foreach($this->services as $invoice_service)
+        {
+            $total += $invoice_service->total_amount;
+        }
+
+        return $total;
     }
     public function getDiscountAmountAttribute()
     {
-        if($this->discount_type == DiscountType::FIXED)
+        if($this->discount_type == DiscountType::FIXED->value)
         {
             return min($this->discount, $this->subtotal);
         }
