@@ -9,6 +9,9 @@
         <div class="g-2 d-flex align-items-center">
             <div>
                 @switch($invoice->status)
+                    @case(App\Enum\InvoiceStatus::DRAFT->value)
+                        <span class='badge bg-dark fs-5 py-2'>@lang('dashboard.draft')</span>
+                        @break
                     @case(App\Enum\InvoiceStatus::PAID->value)
                         <span class='badge bg-success fs-5 py-2'>@lang('dashboard.paid')</span>
                         @break
@@ -22,12 +25,14 @@
                         <span class='badge bg-danger fs-5 py-2'>@lang('dashboard.canceled')</span>
                         @break
                     @default
-                        
                 @endswitch
             </div>
             <div class="ms-auto">
-                @if (!in_array($invoice->status, [App\Enum\InvoiceStatus::PAID, App\Enum\InvoiceStatus::PARTIALLY_PAID]))
+                @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value || App\Enum\InvoiceStatus::UNPAID->value)
                     <button class="btn btn-danger me-2">@lang('dashboard.cancel')</button>
+                @endif
+                @if ($invoice->status != App\Enum\InvoiceStatus::DRAFT->value)
+                    <button class="btn btn-danger me-2">@lang('dashboard.draft')</button>
                 @endif
                 <a href="{{ route('dashboard.invoices.index') }}"><button class="btn btn-light"><i class="ri-arrow-go-forward-fill me-1 align-bottom"></i> @lang('dashboard.return')</button></a>
             </div>
@@ -47,42 +52,25 @@
                     <div class="mb-3">
                         <label class="form-label" for="client_id">@lang('dashboard.client')</label>
                         <select class="form-control" id="client_id" name="client_id">
-                            <option value="{{ $invoice->client_id }}" selected>{{ $invoice->client->name }}</option>
+                            <option value="{{ $invoice->client->id }}">{{ $invoice->client->name }}</option>
                         </select>
                     </div>
-                    <div class="d-flex gap-2 mb-3">
-                        {{-- services --}}
-                        <button id="refresh_price" class="btn btn-success"></button>
-                        <div class="flex-fill">
-                            <label class="form-label" for="service_id">@lang('dashboard.service')</label>
-                            <select class="form-control" id="service_id" name="service_id">
-                                <option value="{{ $invoice->service_id }}" selected>{{ $invoice->service->title }}</option>
-                            </select>
-                        </div>
-                        <div class="flex-fill">
-                            <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" step="1" min="1" value="{{ $invoice->quantity }}" class="form-control" id="quantity" name="quantity" value="{{ $invoice->quantity }}" placeholder="@lang('dashboard.quantity')">
-                                <p id="subtotal" data-price="{{ $invoice->subtotal / $invoice->quantity }}" class="mb-0 d-flex align-items-center fw-bold fs-4">{{ $invoice->subtotal }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 mb-3">
-                        <div class="flex-fill">
+                    <div class="mb-3 d-flex gap-2">
+                        <div class="flex-fill mb-3">
                             <label class="form-label" for="discount">@lang('dashboard.discount')</label>
-                            <input type="number" step="0.01" min="0" class="form-control" id="discount" name="discount" value="{{ $invoice->discount }}" placeholder="@lang('dashboard.discount')">
+                            <input oninput="calculate_total()" type="number" step="0.01" min="0" value="{{ $invoice->discount }}" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
                         </div>
-                        <div class="flex-fill">
+                        <div class="flex-fill mb-3">
                             <label class="form-label" for="discount_type">@lang('dashboard.discount_type')</label>
-                            <select class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')">
+                            <select onchange="calculate_total()" class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')">
                                 <option value="{{ App\Enum\DiscountType::FIXED->value }}" {{ $invoice->discount_type == App\Enum\DiscountType::FIXED->value ? 'selected': '' }}>--@lang('dashboard.fixed')--</option>
-                                <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}" {{ $invoice->discount_type == App\Enum\DiscountType::PERCENTAGE->value ? 'selected': '' }}>--@lang('dashboard.subtotal')--</option>
+                                <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}" {{ $invoice->discount_type == App\Enum\DiscountType::PERCENTAGE->value ? 'selected': '' }}>--@lang('dashboard.percentage')--</option>
                             </select>
                         </div>
                     </div>
                     <div>
                         <label class="form-label" for="due_date">@lang('dashboard.due_date')</label>
-                        <input type="text" id="due_date" name="due_date" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y", strtotime($invoice->due_date)) }}" value="{{ $invoice->due_date }}">
+                        <input type="text" id="due_date" name="due_date" value="{{ $invoice->due_date }}" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y", strtotime($invoice->due_date)) }}">
                     </div>
                 </div>
             </div>
