@@ -160,9 +160,9 @@ class InvoicesController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Invoice $invoice)
     {
-        //
+        $invoice->delete();
     }
 
     public function check_add_service(Request $request)
@@ -173,9 +173,51 @@ class InvoicesController extends Controller implements HasMiddleware
             'price' => ['required' , 'numeric', 'min:0'],
             'discount' => ['numeric', 'min:0'],
             'discount_type' => ['required', Rule::in(DiscountType::FIXED->value, DiscountType::PERCENTAGE->value)]
-        ]);
+        ]);        
+    }
 
+    public function cancel(Invoice $invoice)
+    {
+        if($invoice->status == InvoiceStatus::CANCELED->value)
+        {
+            return response()->json(['error' => 'Invoice is already canceled and cannot be closed again.'], 400);
+        }
 
-        
+        $invoice->payments()->delete();
+
+        $invoice->status = InvoiceStatus::CANCELED->value;
+
+        $invoice->save();
+    }
+
+    public function draft(Invoice $invoice)
+    {
+        if($invoice->status == InvoiceStatus::DRAFT->value)
+        {
+            return response()->json(['error' => 'Invoice is already drafted and cannot be drafted again.'], 400);
+        }
+
+        $invoice->payments()->delete();
+
+        $invoice->status = InvoiceStatus::DRAFT->value;
+
+        $invoice->save();
+    }
+
+    public function confirm(Invoice $invoice)
+    {
+        if(in_array($invoice->status, [InvoiceStatus::PAID->value, InvoiceStatus::PARTIALLY_PAID, InvoiceStatus::UNPAID]))
+        {
+            return response()->json(['error' => 'Invoice is already confirmed and cannot be confirmed again.'], 400);
+        }
+
+        if($invoice->status == InvoiceStatus::CANCELED->value)
+        {
+            return response()->json(['error' => 'Can\'t confirm a canceled invoice, Please set it to draft first.'], 400);
+        }
+
+        $invoice->status = InvoiceStatus::UNPAID->value;
+
+        $invoice->save();
     }
 }

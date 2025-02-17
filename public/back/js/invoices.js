@@ -121,7 +121,7 @@ $("#edit-invoice-form").submit(function(e){
 const AddServiceModal = new bootstrap.Modal('#AddServiceModal')
 const EditServiceModal = new bootstrap.Modal('#EditServiceModal')
 
-document.getElementById("openAddServiceModal").addEventListener('click', () => {
+document.getElementById("openAddServiceModal")?.addEventListener('click', () => {
     $('#AddServiceModal select[name="service_id"]').select2({
         ...service_select_common_data,
         dropdownParent: document.getElementById('AddServiceModal')
@@ -138,7 +138,7 @@ document.getElementById("openAddServiceModal").addEventListener('click', () => {
 
 })
 
-document.getElementById("AddServiceModal").addEventListener('shown.bs.modal', () => {
+document.getElementById("AddServiceModal")?.addEventListener('shown.bs.modal', () => {
     clear_add_form()
 })
 
@@ -197,15 +197,15 @@ function calc_edit_service()
 document.querySelectorAll('#AddServiceModal input').forEach(input => {
     input.addEventListener('input', () => calc_add_service())
 })
-document.querySelector('#AddServiceModal select#discount_type').addEventListener('change', () => calc_add_service())
+document.querySelector('#AddServiceModal select#discount_type')?.addEventListener('change', () => calc_add_service())
 
 document.querySelectorAll('#EditServiceModal input').forEach(input => {
     input.addEventListener('input', () => calc_edit_service())
 })
 
-document.querySelector('#EditServiceModal select#discount_type').addEventListener('change', () => calc_edit_service())
+document.querySelector('#EditServiceModal select#discount_type')?.addEventListener('change', () => calc_edit_service())
 
-document.querySelector('#AddServiceModal button.save').addEventListener('click', function() {
+document.querySelector('#AddServiceModal button.save')?.addEventListener('click', function() {
     const service_id = document.querySelector("#AddServiceModal select[name='service_id']").value
     const service_name = document.querySelector("#AddServiceModal select[name='service_id']").innerText
     const quantity = document.querySelector("#AddServiceModal input[name='quantity']").value ?? 0
@@ -226,19 +226,24 @@ document.querySelector('#AddServiceModal button.save').addEventListener('click',
         success: function(response) {
             let discount_amount = calc_discount_amount(discount_type, discount, price, quantity)
 
-            service_table.row.add([
+            const row_data = [
                 service_name,
                 price,
                 quantity,
                 discount_amount,
-                (price * quantity) - discount_amount,
-                `
+                (price * quantity) - discount_amount
+            ]
+
+            if(invoice_status == 'draft')
+                row_data.push(`
                     <div class="d-flex gap-3 px-4">
                         <i class="ri-edit-box-line text-info fs-2 edit_service" data-service-id="${service_id}" data-discount="${discount}" data-discount-type="${discount_type}" role="button"></i>
                         <i class="ri-delete-bin-line text-danger fs-2 remove_service" role="button"></i>
                     </div>
-                `
-            ]).draw(false)
+                `)
+
+            service_table.row.add(row_data).draw(false)
+
             AddServiceModal.hide()
             Swal.fire({
                 text: "Your changes has been saved successfully",
@@ -266,7 +271,7 @@ $('#services_table tbody').on('click', '.remove_service', function () {
     row.remove().draw(false);
 });
 
-document.querySelector('#AddServiceModal button.save-add-new').addEventListener('click', function() {
+document.querySelector('#AddServiceModal button.save-add-new')?.addEventListener('click', function() {
     const service_id = document.querySelector("#AddServiceModal select[name='service_id']").value
     const service_name = document.querySelector("#AddServiceModal select[name='service_id']").innerText
     const quantity = document.querySelector("#AddServiceModal input[name='quantity']").value ?? 0
@@ -287,19 +292,24 @@ document.querySelector('#AddServiceModal button.save-add-new').addEventListener(
         success: function(response) {
             let discount_amount = calc_discount_amount(discount_type, discount, price, quantity)
 
-            service_table.row.add([
+            const row_data = [
                 service_name,
                 price,
                 quantity,
                 discount_amount,
-                (price * quantity) - discount_amount,
-                `
+                (price * quantity) - discount_amount
+            ]
+
+            if(invoice_status == 'draft')
+                row_data.push(`
                     <div class="d-flex gap-3 px-4">
                         <i class="ri-edit-box-line text-info fs-2 edit_service" data-service-id="${service_id}" data-discount="${discount}" data-discount-type="${discount_type}" role="button"></i>
                         <i class="ri-delete-bin-line text-danger fs-2 remove_service" role="button"></i>
                     </div>
-                `
-            ]).draw(false)
+                `)
+
+            service_table.row.add(row_data).draw(false)
+            
             Swal.fire({
                 text: "Your changes has been saved successfully",
                 icon: "success"
@@ -338,7 +348,14 @@ function calculate_total()
     document.querySelector("span#total").innerText = total - discount_amount
 }
 
+let selected_row = null
+
+document.getElementById("EditServiceModal")?.addEventListener('hidden.bs.modal', () => {
+    selected_row = null
+})
+
 $('#services_table tbody').on('click', '.edit_service', function () {
+    selected_row = $(this).closest('tr')
     const row = service_table.row($(this).closest('tr'));
     const rowData = row.data();
     const service_id = $(this).attr("data-service-id")
@@ -376,7 +393,7 @@ $('#services_table tbody').on('click', '.edit_service', function () {
     EditServiceModal.show()
 });
 
-document.querySelector('#EditServiceModal button.save').addEventListener('click', function() {
+document.querySelector('#EditServiceModal button.save')?.addEventListener('click', function() {
     const service_id = document.querySelector("#EditServiceModal select[name='service_id']").value
     const service_name = document.querySelector("#EditServiceModal select[name='service_id']").innerText
     const quantity = document.querySelector("#EditServiceModal input[name='quantity']").value ?? 0
@@ -384,6 +401,8 @@ document.querySelector('#EditServiceModal button.save').addEventListener('click'
     const discount = document.querySelector("#EditServiceModal input[name='discount']").value ?? 0
     const discount_type = document.querySelector("#EditServiceModal select[name='discount_type']").value ?? 'fixed'
     const csrf = document.querySelector("input[name='_token']").value
+
+    const invoice_service_id = selected_row.find(".edit_service").attr("data-invoice-service-id")
 
     var submit_button = $(this)
     submit_button.prop("disabled", true)
@@ -397,7 +416,7 @@ document.querySelector('#EditServiceModal button.save').addEventListener('click'
         success: function(response) {
             let discount_amount = calc_discount_amount(discount_type, discount, price, quantity)
 
-            const row = service_table.row($(`#services_table tr td [data-service-id='${service_id}']`).closest('tr'))
+            const row = service_table.row(selected_row)
             const rowData = row.data()
 
             rowData[0] = service_name
@@ -405,12 +424,14 @@ document.querySelector('#EditServiceModal button.save').addEventListener('click'
             rowData[2] = quantity
             rowData[3] = discount_amount
             rowData[4] = (price * quantity) - discount_amount
-            rowData[5] = `
-                    <div class="d-flex gap-3 px-4">
-                        <i class="ri-edit-box-line text-info fs-2 edit_service" data-service-id="${service_id}" data-discount="${discount}" data-discount-type="${discount_type}" role="button"></i>
-                        <i class="ri-delete-bin-line text-danger fs-2 remove_service" role="button"></i>
-                    </div>
-                `
+
+            if(invoice_status == 'draft')
+                rowData[5] = `
+                        <div class="d-flex gap-3 px-4">
+                            <i class="ri-edit-box-line text-info fs-2 edit_service" ${invoice_service_id ? "data-invoice-service-id='" + invoice_service_id + "'" : ''} data-service-id="${service_id}" data-discount="${discount}" data-discount-type="${discount_type}" role="button"></i>
+                            <i class="ri-delete-bin-line text-danger fs-2 remove_service" role="button"></i>
+                        </div>
+                    `
             
             row.data(rowData).draw()
 
@@ -421,6 +442,107 @@ document.querySelector('#EditServiceModal button.save').addEventListener('click'
             submit_button.prop("disabled", false)
             EditServiceModal.hide()
             calculate_total()
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON.errors;
+            var firstKey = Object.keys(errors)[0];
+            Swal.fire({
+                text: errors[firstKey][0],
+                icon: "error"
+            });
+            submit_button.prop("disabled", false)
+        }
+    });
+})
+
+$("#cancel_button").click(function(){
+    let button = $(this)
+    Swal.fire({
+        title: "Do you really want to cancel this invoice?",
+        text: "All payment history will be lost!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Cancel",
+        confirmButtonColor: "red",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const invoice_id = $("#edit-invoice-form").attr("data-id")
+            const csrf = document.querySelector("input[name='_token']").value
+
+            button.prop("disabled", true)
+
+            $.ajax({
+                url: `/dashboard/invoice/${invoice_id}/cancel`,
+                method: 'POST',
+                data: {_token: csrf},
+                success: function(response) {
+                    location.reload()
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON.errors;
+                    var firstKey = Object.keys(errors)[0];
+                    Swal.fire({
+                        text: errors[firstKey][0],
+                        icon: "error"
+                    });
+                    submit_button.prop("disabled", false)
+                }
+            });
+        }
+    });
+})
+
+$("#draft_button").click(function(){
+    let button = $(this)
+    Swal.fire({
+        title: "Do you really want to set this invoice as draft?",
+        text: "All payment history will be lost!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Draft",
+        confirmButtonColor: "black",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const invoice_id = $("#edit-invoice-form").attr("data-id")
+            const csrf = document.querySelector("input[name='_token']").value
+            
+            button.prop("disabled", true)
+
+            $.ajax({
+                url: `/dashboard/invoice/${invoice_id}/draft`,
+                method: 'POST',
+                data: {_token: csrf},
+                success: function(response) {
+                    location.reload()
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON.errors;
+                    var firstKey = Object.keys(errors)[0];
+                    Swal.fire({
+                        text: errors[firstKey][0],
+                        icon: "error"
+                    });
+                    submit_button.prop("disabled", false)
+                }
+            });
+        }
+    });
+})
+
+$("#confirm_button").click(function(){
+    const invoice_id = $("#edit-invoice-form").attr("data-id")
+    let button = $(this)
+
+    const csrf = document.querySelector("input[name='_token']").value
+    
+    button.prop("disabled", true)
+
+    $.ajax({
+        url: `/dashboard/invoice/${invoice_id}/confirm`,
+        method: 'POST',
+        data: {_token: csrf},
+        success: function(response) {
+            location.reload()
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;

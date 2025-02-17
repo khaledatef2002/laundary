@@ -250,15 +250,5 @@
                 minimumInputLength: 0
             });
         })
-
-        $("input[name='quantity']").keyup(() => check_sub_total())
-
-        function check_sub_total()
-        {
-            const subtotal = $("p#subtotal")
-            const price = Number(subtotal.attr("data-price"))
-            const quantity = Number($("input[name='quantity']").val() ?? 0)
-            subtotal.text(price * quantity)
-        }
     </script>
 @endsection
