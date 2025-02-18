@@ -14,6 +14,7 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
 
         Route::resource('invoices', InvoicesController::class);
         Route::post('/check-add-service', [InvoicesController::class, 'check_add_service']);
+        Route::post('/check-add-payment/{invoice}/{invoice_payment?}', [InvoicesController::class, 'check_add_payment']);
         Route::post('invoice/{invoice}/cancel', [InvoicesController::class, 'cancel']);
         Route::post('invoice/{invoice}/draft', [InvoicesController::class, 'draft']);
         Route::post('invoice/{invoice}/confirm', [InvoicesController::class, 'confirm']);

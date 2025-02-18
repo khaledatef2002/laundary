@@ -80,7 +80,7 @@ class ClientsController extends Controller implements HasMiddleware
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:30'],
-            'email' => ['string', 'lowercase', 'email', 'max:100', Rule::unique(Client::class)],
+            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:100', Rule::unique(Client::class)],
             'phone' => ['required'],
             'address' => ['required', 'min:5', 'max:500'],
         ]);

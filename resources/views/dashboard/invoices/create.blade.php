@@ -187,6 +187,8 @@
 @section('custom-js')
     <script src="{{ asset('back/js/invoices.js') }}"></script>
     <script>
+        const invoice_status = 'draft'
+
         const service_table = $("#services_table").DataTable({
             lengthChange: false,
             searching: false,

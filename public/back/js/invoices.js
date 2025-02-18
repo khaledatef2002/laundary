@@ -50,11 +50,6 @@ $("#create-invoice-form").submit(function(e){
         const price = data[1]
         const quantity = data[2]
 
-        const service = {
-            service_id: serviceId,
-            price, quantity, discount, discountType
-        }
-
         formData.append(`services[${index}][service_id]`, serviceId);
         formData.append(`services[${index}][price]`, price);
         formData.append(`services[${index}][quantity]`, quantity);
@@ -92,6 +87,55 @@ $("#edit-invoice-form").submit(function(e){
 
     const invoice_id = $(this).attr("data-id")
 
+    if(invoice_status == 'draft')
+    {
+        service_table.rows().every(function(index){
+            const data = this.data()
+            const tempDiv = $("<div>").html(data[5])
+            const editIcon = tempDiv.find('.edit_service');
+    
+            const serviceId = editIcon.data('service-id');
+            const discount = editIcon.data('discount');
+            const discountType = editIcon.data('discount-type');
+            const price = data[1]
+            const quantity = data[2]
+
+            const invoice_service_id = editIcon.data("invoice-service-id")
+
+            if(invoice_service_id)
+                formData.append(`services[${index}][invoice_service_id]`, invoice_service_id);
+            else
+                formData.append(`services[${index}][invoice_service_id]`, -1);
+                
+            formData.append(`services[${index}][service_id]`, serviceId);
+            formData.append(`services[${index}][price]`, price);
+            formData.append(`services[${index}][quantity]`, quantity);
+            formData.append(`services[${index}][discount]`, discount);
+            formData.append(`services[${index}][discount_type]`, discountType);
+        })
+    }
+    else if(invoice_status != 'canceled') 
+    {
+        payment_table.rows().every(function(index){
+            const data = this.data()
+            const tempDiv = $("<div>").html(data[5])
+            const editIcon = tempDiv.find('.edit_payment');
+
+            const amount = data[0]
+            const date = data[1]
+
+            const invoice_payment_id = editIcon.data("invoice-payment-id")
+
+            if(invoice_payment_id)
+                formData.append(`payments[${index}][invoice_payment_id]`, invoice_payment_id);
+            else
+                formData.append(`payments[${index}][invoice_payment_id]`, -1);
+    
+            formData.append(`payments[${index}][amount]`, amount);
+            formData.append(`payments[${index}][date]`, date);
+        })
+    }
+
     $.ajax({
         url: "/dashboard/invoices/" + invoice_id,
         method: 'POST',
@@ -99,10 +143,46 @@ $("#edit-invoice-form").submit(function(e){
         contentType: false,
         processData: false,
         success: function(response) {
+            if(invoice_status != 'draft' && invoice_status != 'canceled')
+            {
+                const data = response
+
+                $("#invoice_status").text(data.text)
+
+                $("#invoice_status").removeClass("bg-secondary")
+                $("#invoice_status").removeClass("bg-warning")
+                $("#invoice_status").removeClass("bg-success")
+
+                if(data.status == "unpaid")
+                {
+                    $("#invoice_status").addClass("bg-secondary")
+                }
+                else if(data.status == "partially_paid")
+                {
+                    $("#invoice_status").addClass("bg-warning")
+                }
+                else if(data.status == "paid")
+                {
+                    $("#invoice_status").addClass("bg-success")
+                }
+
+                invoice_status = data.status
+
+                if(data.overtime)
+                {
+                    $("#invoice_overtime").removeClass('d-none')
+                }
+                else
+                {
+                    $("#invoice_overtime").addClass('d-none')
+                }
+            }
+
             Swal.fire({
                 text: "Your changes has been saved successfully",
                 icon: "success"
             });
+            
             submit_button.prop("disabled", false)
         },
         error: function(xhr) {
@@ -139,10 +219,10 @@ document.getElementById("openAddServiceModal")?.addEventListener('click', () => 
 })
 
 document.getElementById("AddServiceModal")?.addEventListener('shown.bs.modal', () => {
-    clear_add_form()
+    clear_add_service_form()
 })
 
-function clear_add_form()
+function clear_add_service_form()
 {
     $("#AddServiceModal select[name='service_id']").val(null).trigger('change')
     $("#AddServiceModal input[name='quantity']").val("1")
@@ -271,6 +351,13 @@ $('#services_table tbody').on('click', '.remove_service', function () {
     row.remove().draw(false);
 });
 
+$('#payment_table tbody').on('click', '.remove_payment', function () {
+    const row = payment_table.row($(this).closest('tr'));
+    const rowData = row.data();
+    
+    row.remove().draw(false);
+});
+
 document.querySelector('#AddServiceModal button.save-add-new')?.addEventListener('click', function() {
     const service_id = document.querySelector("#AddServiceModal select[name='service_id']").value
     const service_name = document.querySelector("#AddServiceModal select[name='service_id']").innerText
@@ -315,7 +402,7 @@ document.querySelector('#AddServiceModal button.save-add-new')?.addEventListener
                 icon: "success"
             });
             submit_button.prop("disabled", false)
-            clear_add_form()
+            clear_add_service_form()
             calculate_total()
         },
         error: function(xhr) {
@@ -340,8 +427,8 @@ function calculate_total()
         total += data[4];
     })
 
-    const discount = $("#create-invoice-form input[name='discount']").val() ?? 0
-    const discount_type = $("#create-invoice-form select[name='discount_type']").val() ?? 'fixed'
+    const discount = $("form input[name='discount']").val() ?? 0
+    const discount_type = $("form select[name='discount_type']").val() ?? 'fixed'
 
     const discount_amount = calc_discount_amount(discount_type, discount, total)
 
@@ -543,6 +630,140 @@ $("#confirm_button").click(function(){
         data: {_token: csrf},
         success: function(response) {
             location.reload()
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON.errors;
+            var firstKey = Object.keys(errors)[0];
+            Swal.fire({
+                text: errors[firstKey][0],
+                icon: "error"
+            });
+            submit_button.prop("disabled", false)
+        }
+    });
+})
+
+
+// Payment
+const AddPaymentModal = new bootstrap.Modal('#AddPaymentModal')
+const EditPaymentModal = new bootstrap.Modal('#EditPaymentModal')
+
+document.getElementById("openAddPaymentModal")?.addEventListener('click', () => AddPaymentModal.show())
+
+document.getElementById("AddPaymentModal")?.addEventListener('shown.bs.modal', () => {
+    clear_add_payment_form()
+})
+
+function clear_add_payment_form()
+{
+    $("#AddPaymentModal input[name='amount']").val("0")
+    $("#AddPaymentModal input[name='date']").val($("#AddPaymentModal input[name='date']").attr("data-deafult-date"))
+}
+document.querySelector('#AddPaymentModal button.save')?.addEventListener('click', function() {
+    const amount = document.querySelector("#AddPaymentModal input[name='amount']").value
+    const date = document.querySelector("#AddPaymentModal input[name='date']").value
+    const csrf = document.querySelector("input[name='_token']").value
+    const invoice_id = document.querySelector("form#edit-invoice-form").getAttribute("data-id")
+
+    var submit_button = $(this)
+    submit_button.prop("disabled", true)
+
+    $.ajax({
+        url: "/dashboard/check-add-payment/" + invoice_id,
+        method: 'POST',
+        data: {
+            amount, date, _token: csrf
+        },
+        success: function(response) {
+
+            const row_data = [
+                amount,
+                date,
+                `
+                    <div class="d-flex gap-3 px-4">
+                        <i class="ri-edit-box-line text-info fs-2 edit_payment" role="button"></i>
+                        <i class="ri-delete-bin-line text-danger fs-2 remove_payment" role="button"></i>
+                    </div>
+                `
+            ]
+
+            payment_table.row.add(row_data).draw(false)
+
+            AddPaymentModal.hide()
+            Swal.fire({
+                text: "Your changes has been saved successfully",
+                icon: "success"
+            });
+            submit_button.prop("disabled", false)
+            calculate_total()
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON.errors;
+            var firstKey = Object.keys(errors)[0];
+            Swal.fire({
+                text: errors[firstKey][0],
+                icon: "error"
+            });
+            submit_button.prop("disabled", false)
+        }
+    });
+})
+
+let selected_row_payment = null
+
+document.getElementById("EditPaymentModal")?.addEventListener('hidden.bs.modal', () => {
+    selected_row_payment = null
+})
+
+$('#payment_table tbody').on('click', '.edit_payment', function () {
+    selected_row_payment = $(this).closest('tr')
+    const row = payment_table.row($(this).closest('tr'));
+    const rowData = row.data();
+
+    const amount = rowData[0]
+    const date = rowData[1]
+
+    $("#EditPaymentModal input[name='amount']").val(amount)
+    $("#EditPaymentModal input[name='date']").val(date)
+    $("#EditPaymentModal input[name='date']").attr("data-deafult-date", date)
+
+    EditPaymentModal.show()
+});
+
+document.querySelector('#EditPaymentModal button.save')?.addEventListener('click', function() {
+    const amount = document.querySelector("#EditPaymentModal input[name='amount']").value ?? 0
+    const date = document.querySelector("#EditPaymentModal input[name='date']").value
+    const csrf = document.querySelector("input[name='_token']").value
+
+    const invoice_id = document.querySelector("form#edit-invoice-form").getAttribute("data-id")
+    const invoice_payment_id = selected_row_payment.find(".edit_payment").attr("data-invoice-payment-id")
+
+    var submit_button = $(this)
+    submit_button.prop("disabled", true)
+
+    $.ajax({
+        url: "/dashboard/check-add-payment/" + invoice_id + (invoice_payment_id ? '/' + invoice_payment_id : ''),
+        method: 'POST',
+        data: {
+            amount, date, _token: csrf
+        },
+        success: function(response) {
+
+            const row = payment_table.row(selected_row_payment)
+            const rowData = row.data()
+
+            rowData[0] = amount
+            rowData[1] = date
+            
+            row.data(rowData).draw()
+
+            Swal.fire({
+                text: "Your changes has been saved successfully",
+                icon: "success"
+            });
+            submit_button.prop("disabled", false)
+            EditPaymentModal.hide()
+            calculate_total()
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;

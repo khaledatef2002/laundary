@@ -8,24 +8,30 @@
     <div class="card-body">
         <div class="g-2 d-flex align-items-center">
             <div>
+                @php($disabled = $invoice->status != App\Enum\InvoiceStatus::DRAFT->value ? "disabled" : "")
                 @switch($invoice->status)
                     @case(App\Enum\InvoiceStatus::DRAFT->value)
-                        <span class='badge bg-dark fs-5 py-2'>@lang('dashboard.draft')</span>
+                        <span class='badge bg-dark fs-5 py-2' id="invoice_status">@lang('dashboard.draft')</span>
                         @break
                     @case(App\Enum\InvoiceStatus::PAID->value)
-                        <span class='badge bg-success fs-5 py-2'>@lang('dashboard.paid')</span>
+                        <span class='badge bg-success fs-5 py-2' id="invoice_status">@lang('dashboard.paid')</span>
                         @break
                     @case(App\Enum\InvoiceStatus::UNPAID->value)
-                        <span class='badge bg-secondary fs-5 py-2'>@lang('dashboard.unpaid')</span>
+                        <span class='badge bg-secondary fs-5 py-2' id="invoice_status">@lang('dashboard.unpaid')</span>
                         @break
                     @case(App\Enum\InvoiceStatus::PARTIALLY_PAID->value)
-                        <span class='badge bg-warning fs-5 py-2'>@lang('dashboard.partially_paid')</span>
+                        <span class='badge bg-warning fs-5 py-2' id="invoice_status">@lang('dashboard.partially_paid')</span>
                         @break
                     @case(App\Enum\InvoiceStatus::CANCELED->value)
-                        <span class='badge bg-danger fs-5 py-2'>@lang('dashboard.canceled')</span>
+                        <span class='badge bg-danger fs-5 py-2' id="invoice_status">@lang('dashboard.canceled')</span>
                         @break
                     @default
                 @endswitch
+                @if (strtotime($invoice->due_date) < strtotime(now()) && $invoice->status != App\Enum\InvoiceStatus::PAID->value && $invoice->status != App\Enum\InvoiceStatus::DRAFT->value && $invoice->status != App\Enum\InvoiceStatus::CANCELED->value)
+                    <span class='badge bg-danger fs-5 py-2' id="invoice_overtime">@lang('dashboard.overtime')</span>  
+                @else
+                    <span class='badge bg-danger fs-5 py-2 d-none' id="invoice_overtime">@lang('dashboard.overtime')</span>  
+                @endif
             </div>
             <div class="ms-auto d-flex align-items-center">
                 <i class="ri-file-pdf-2-line me-2 fs-2" role="button"></i>
@@ -55,18 +61,18 @@
                     {{-- client --}}
                     <div class="mb-3">
                         <label class="form-label" for="client_id">@lang('dashboard.client')</label>
-                        <select class="form-control" id="client_id" name="client_id">
+                        <select class="form-control" id="client_id" name="client_id" {{ $disabled }}>
                             <option value="{{ $invoice->client->id }}">{{ $invoice->client->name }}</option>
                         </select>
                     </div>
                     <div class="mb-3 d-flex gap-2">
                         <div class="flex-fill mb-3">
                             <label class="form-label" for="discount">@lang('dashboard.discount')</label>
-                            <input oninput="calculate_total()" type="number" step="0.01" min="0" value="{{ $invoice->discount }}" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')">
+                            <input oninput="calculate_total()" type="number" step="0.01" min="0" value="{{ $invoice->discount }}" class="form-control" id="discount" name="discount" placeholder="@lang('dashboard.discount')" {{ $disabled }}>
                         </div>
                         <div class="flex-fill mb-3">
                             <label class="form-label" for="discount_type">@lang('dashboard.discount_type')</label>
-                            <select onchange="calculate_total()" class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')">
+                            <select onchange="calculate_total()" class="form-control" id="discount_type" name="discount_type" placeholder="@lang('dashboard.discount_type')" {{ $disabled }}>
                                 <option value="{{ App\Enum\DiscountType::FIXED->value }}" {{ $invoice->discount_type == App\Enum\DiscountType::FIXED->value ? 'selected': '' }}>--@lang('dashboard.fixed')--</option>
                                 <option value="{{ App\Enum\DiscountType::PERCENTAGE->value }}" {{ $invoice->discount_type == App\Enum\DiscountType::PERCENTAGE->value ? 'selected': '' }}>--@lang('dashboard.percentage')--</option>
                             </select>
@@ -74,77 +80,99 @@
                     </div>
                     <div>
                         <label class="form-label" for="due_date">@lang('dashboard.due_date')</label>
-                        <input type="text" id="due_date" name="due_date" value="{{ $invoice->due_date }}" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y", strtotime($invoice->due_date)) }}">
+                        <input type="text" id="due_date" name="due_date" value="{{ $invoice->due_date }}" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y", strtotime($invoice->due_date)) }}" {{ $disabled }}>
                     </div>
                 </div>
                 <div class="col-12 px-3 mt-2">
-                    <form action="#" class="form-steps" autocomplete="off">
-                        <div class="step-arrow-nav mb-3">
+                    <div class="step-arrow-nav mb-3">
 
-                            <ul class="nav nav-pills custom-nav nav-justified" role="tablist">
+                        <ul class="nav nav-pills custom-nav nav-justified" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="invoice-services-tab" data-bs-toggle="pill" data-bs-target="#invoice-services" type="button" role="tab" aria-controls="invoice-services" aria-selected="true">Services</button>
+                            </li>
+                            @if (!in_array($invoice->status, [App\Enum\InvoiceStatus::DRAFT->value, App\Enum\InvoiceStatus::CANCELED->value]))
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="invoice-services-tab" data-bs-toggle="pill" data-bs-target="#invoice-services" type="button" role="tab" aria-controls="invoice-services" aria-selected="true">Services</button>
+                                    <button class="nav-link" id="invoice-payments-tab" data-bs-toggle="pill" data-bs-target="#invoice-payments" type="button" role="tab" aria-controls="steparrow-description-info" aria-selected="false">Payments</button>
                                 </li>
-                                @if ($invoice->status != App\Enum\InvoiceStatus::DRAFT->value)
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="invoice-payments-tab" data-bs-toggle="pill" data-bs-target="#steparrow-description-info" type="button" role="tab" aria-controls="steparrow-description-info" aria-selected="false">Payments</button>
-                                    </li>
-                                @endif
-                            </ul>
-                        </div>
+                            @endif
+                        </ul>
+                    </div>
 
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="invoice-services" role="tabpanel" aria-labelledby="invoice-services-tab">
-                                <div class="mb-4">
-                                    @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value)
-                                        <button class="btn btn-success ms-auto d-block mb-1" id="openAddServiceModal" type="button">Add +</button>
-                                    @endif
-                                    <table id="services_table" class="w-100">
-                                        <thead class="bg-dark text-white text-center">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="invoice-services" role="tabpanel" aria-labelledby="invoice-services-tab">
+                            <div class="mb-4">
+                                @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value)
+                                    <button class="btn btn-success ms-auto d-block mb-1" id="openAddServiceModal" type="button">Add +</button>
+                                @endif
+                                <table id="services_table" class="w-100">
+                                    <thead class="bg-dark text-white text-center">
+                                        <tr>
+                                            <th class="py-3">Service</th>
+                                            <th class="py-3">Price</th>
+                                            <th class="py-3">Quantity</th>
+                                            <th class="py-3">Discount</th>
+                                            <th class="py-3">Subtotal</th>
+                                            @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value)
+                                                <th></th>
+                                            @endif
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        @foreach ($invoice->services as $service)
                                             <tr>
-                                                <th class="py-3">Service</th>
-                                                <th class="py-3">Price</th>
-                                                <th class="py-3">Quantity</th>
-                                                <th class="py-3">Discount</th>
-                                                <th class="py-3">Subtotal</th>
+                                                <td>{{ $service->service->title }}</td>
+                                                <td>{{ $service->price }}</td>
+                                                <td>{{ $service->quantity }}</td>
+                                                <td>{{ $service->discount_amount }}</td>
+                                                <td>{{ $service->total_amount }}</td>
                                                 @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value)
-                                                    <th></th>
+                                                    <td>
+                                                        <div class="d-flex gap-3 px-4">
+                                                            <i class="ri-edit-box-line text-info fs-2 edit_service" data-invoice-service-id="{{ $service->id }}" data-service-id="{{ $service->service->id }}" data-discount="{{ $service->discount }}" data-discount-type="{{ $service->discount_type }}" role="button"></i>
+                                                            <i class="ri-delete-bin-line text-danger fs-2 remove_service" role="button"></i>
+                                                        </div>
+                                                    </td>
                                                 @endif
                                             </tr>
-                                        </thead>
-                                        <tbody class="text-center">
-                                            @foreach ($invoice->services as $service)
-                                                <tr>
-                                                    <td>{{ $service->service->title }}</td>
-                                                    <td>{{ $service->price }}</td>
-                                                    <td>{{ $service->quantity }}</td>
-                                                    <td>{{ $service->discount_amount }}</td>
-                                                    <td>{{ $service->total_amount }}</td>
-                                                    @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value)
-                                                        <td>
-                                                            <div class="d-flex gap-3 px-4">
-                                                                <i class="ri-edit-box-line text-info fs-2 edit_service" data-invoice-service-id="{{ $service->id }}" data-service-id="{{ $service->service->id }}" data-discount="{{ $service->discount }}" data-discount-type="{{ $service->discount_type }}" role="button"></i>
-                                                                <i class="ri-delete-bin-line text-danger fs-2 remove_service" role="button"></i>
-                                                            </div>
-                                                        </td>
-                                                    @endif
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
-                            @if ($invoice->status != App\Enum\InvoiceStatus::DRAFT->value)
-                                <div class="tab-pane fade" id="invoice-payments" role="tabpanel" aria-labelledby="invoice-payments-tab">
-                                    
-                                </div>
-                            @endif
                         </div>
-                        <!-- end tab content -->
-                        <p class="text-end me-3">
-                            <span class="fw-bold">Total: </span> <span id="total">{{ $invoice->total_amount }}</span>
-                        </p>
-                    </form>
+                        @if (!in_array($invoice->status, [App\Enum\InvoiceStatus::DRAFT->value, App\Enum\InvoiceStatus::CANCELED->value]))
+                            <div class="tab-pane fade mb-4" id="invoice-payments" role="tabpanel" aria-labelledby="invoice-payments-tab">
+                                <button class="btn btn-success ms-auto d-block mb-1" id="openAddPaymentModal" type="button">Add +</button>
+                                
+                                <table id="payment_table" class="w-100">
+                                    <thead class="bg-dark text-white text-center">
+                                        <tr>
+                                            <th class="py-3">Amount</th>
+                                            <th class="py-3">date</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        @foreach ($invoice->payments as $payment)
+                                            <tr>
+                                                <td>{{ $payment->amount }}</td>
+                                                <td>{{ date("M d, Y", strtotime($payment->date)) }}</td>
+                                                <td>
+                                                    <div class="d-flex gap-3 px-4">
+                                                        <i class="ri-edit-box-line text-info fs-2 edit_payment" data-invoice-payment-id="{{ $payment->id }}" role="button"></i>
+                                                        <i class="ri-delete-bin-line text-danger fs-2 remove_payment" role="button"></i>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                    </div>
+                    <!-- end tab content -->
+                    <p class="text-end me-3">
+                        <span class="fw-bold">Total: </span> <span id="total">{{ $invoice->total_amount }}</span>
+                    </p>
                 </div>
             </div>
             <!-- end card -->
@@ -262,6 +290,61 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal" id="AddPaymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="amount">@lang('dashboard.payment-amount')</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" step="0.01" min="1" value="0" class="form-control" id="amount" name="amount" placeholder="@lang('dashboard.payment-amount')">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label" for="date">@lang('dashboard.payment_date')</label>
+                    <input type="text" id="date" name="date" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y") }}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary save">Save</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="EditPaymentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="amount">@lang('dashboard.payment-amount')</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" step="0.01" min="1" value="0" class="form-control" id="amount" name="amount" placeholder="@lang('dashboard.payment-amount')">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label" for="date">@lang('dashboard.payment_date')</label>
+                    <input type="text" id="date" name="date" class="form-control" data-provider="flatpickr" data-date-format="M d, Y" data-deafult-date="{{ date("M d, Y") }}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary save">Save</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('custom-js')
@@ -304,6 +387,15 @@
             },
             minimumInputLength: 0,
         }
+
+        const payment_table = $("#payment_table").DataTable({
+            lengthChange: false,
+            searching: false,
+            info: false,
+            columnDefs: [
+                {orderable: false, targets: -1}
+            ]
+        })
 
         $(document).ready(function() {
             $('select[name="client_id"]').select2({

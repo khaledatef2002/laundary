@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade')->onUpdate('cascade');
 
             $table->float('amount');
+
+            $table->date('date');
             
             $table->timestamps();
         });

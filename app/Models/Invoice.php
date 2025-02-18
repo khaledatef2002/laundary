@@ -42,7 +42,6 @@ class Invoice extends Model
         return $this->hasMany(InvoicesService::class);
     }
 
-    // To Do
     public function getSubtotalAttribute()
     {
         $total = 0;
@@ -70,5 +69,17 @@ class Invoice extends Model
     public function getTotalAmountAttribute()
     {
         return $this->subtotal - $this->discount_amount;
+    }
+
+    public function getPaidAmountAttribute()
+    {
+        $total = 0;
+
+        foreach($this->payments as $invoice_payment)
+        {
+            $total += $invoice_payment->amount;
+        }
+
+        return $total;
     }
 }

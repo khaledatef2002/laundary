@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoicesService extends Model
 {
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     public function invoice()
     {
