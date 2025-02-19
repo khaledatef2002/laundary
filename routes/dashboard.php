@@ -2,8 +2,11 @@
 
 use App\helper\select2;
 use App\Http\Controllers\Dashboard\{ClientsController, HomeController, InvoicesController, RolesController, ServicesController, SystemSettings, SystemSettingsController, UsersController};
+use App\Models\Invoice;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Spatie\LaravelPdf\Enums\Format;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard')->middleware(['localeSessionRedirect', 'localizationRedirect', 'localeViewPath'])->group(function(){
     require __DIR__.'/auth.php';
@@ -18,6 +21,17 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
         Route::post('invoice/{invoice}/cancel', [InvoicesController::class, 'cancel']);
         Route::post('invoice/{invoice}/draft', [InvoicesController::class, 'draft']);
         Route::post('invoice/{invoice}/confirm', [InvoicesController::class, 'confirm']);
+
+        Route::get('/invoice/{invoice}', function(Invoice $invoice){
+            $action = "view";
+            return view('dashboard.templates.invoice', compact('invoice', 'action'));
+        })->name('invoice.template');
+
+        Route::get('/invoice/{invoice}/download', function(Invoice $invoice){
+            return Pdf::view('dashboard.templates.invoice', compact('invoice'))
+                    ->format(Format::A5)
+                    ->name($invoice->invoice_number . ".pdf");
+        })->name('invoice.template.download');
 
         Route::resource('clients', ClientsController::class)->except('show');
         Route::resource('users', UsersController::class)->except('show');

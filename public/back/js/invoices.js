@@ -675,6 +675,24 @@ document.querySelector('#AddPaymentModal button.save')?.addEventListener('click'
             amount, date, _token: csrf
         },
         success: function(response) {
+            let total_before = 0
+            payment_table.rows().every(function(){
+                const rowData = this.data();
+                total_before += Number(rowData[0])
+            })
+
+            const total_required = Number($("span#total").text())
+
+            if(total_required < total_before + Number(amount))
+            {
+                Swal.fire({
+                    text: `By applying these changes the total paid amount will be ${total_before + Number(amount)} which is more than needed.`,
+                    icon: "error"
+                });
+
+                submit_button.prop("disabled", false)
+                return false
+            }
 
             const row_data = [
                 amount,
@@ -696,6 +714,7 @@ document.querySelector('#AddPaymentModal button.save')?.addEventListener('click'
             });
             submit_button.prop("disabled", false)
             calculate_total()
+            calculate_paid_remaining()
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;
@@ -748,9 +767,29 @@ document.querySelector('#EditPaymentModal button.save')?.addEventListener('click
             amount, date, _token: csrf
         },
         success: function(response) {
-
             const row = payment_table.row(selected_row_payment)
             const rowData = row.data()
+
+            let total_before = 0
+            payment_table.rows().every(function(){
+                const rowData = this.data();
+                total_before += Number(rowData[0])
+            })
+
+            total_before -= Number(rowData[0])
+
+            const total_required = Number($("span#total").text())
+
+            if(total_required < total_before + Number(amount))
+            {
+                Swal.fire({
+                    text: `By applying these changes the total paid amount will be ${total_before + Number(amount)} which is more than needed.`,
+                    icon: "error"
+                });
+
+                submit_button.prop("disabled", false)
+                return false
+            }
 
             rowData[0] = amount
             rowData[1] = date
@@ -764,6 +803,7 @@ document.querySelector('#EditPaymentModal button.save')?.addEventListener('click
             submit_button.prop("disabled", false)
             EditPaymentModal.hide()
             calculate_total()
+            calculate_paid_remaining()
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;
@@ -776,3 +816,17 @@ document.querySelector('#EditPaymentModal button.save')?.addEventListener('click
         }
     });
 })
+
+function calculate_paid_remaining()
+{
+    let total_paid = 0
+    payment_table.rows().every(function(){
+        const rowData = this.data();
+        total_paid += Number(rowData[0])
+    })
+
+    const required = Number($("span#total").text())
+
+    $("span#paid").text(total_paid)
+    $("span#remaining").text(required - total_paid)
+}

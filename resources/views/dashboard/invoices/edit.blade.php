@@ -34,7 +34,7 @@
                 @endif
             </div>
             <div class="ms-auto d-flex align-items-center">
-                <i class="ri-file-pdf-2-line me-2 fs-2" role="button"></i>
+                <a href="{{ route('dashboard.invoice.template', $invoice) }}" target="_blank"><i class="ri-file-pdf-2-line me-2 fs-2" role="button"></i></a>
                 @if ($invoice->status == App\Enum\InvoiceStatus::DRAFT->value)
                     <button class="btn btn-success me-2" id="confirm_button">@lang('dashboard.confirm')</button>
                 @endif
@@ -170,9 +170,18 @@
                         @endif
                     </div>
                     <!-- end tab content -->
-                    <p class="text-end me-3">
-                        <span class="fw-bold">Total: </span> <span id="total">{{ $invoice->total_amount }}</span>
-                    </p>
+                    <div id="pricing_parent" style="width: fit-content" class="ms-auto">
+                        <p class="text-start mb-0 px-2">
+                            <span class="fw-bold">Total: </span> <span id="total">{{ $invoice->total_amount }}</span>
+                        </p>
+                        <p class="text-start mb-0 px-2">
+                            <span class="fw-bold">Paid: </span> <span id="paid">{{ $invoice->paid_amount }}</span>
+                        </p>
+                        <hr class="my-2">
+                        <p class="text-start px-2">
+                            <span class="fw-bold">Remaining: </span> <span id="remaining">{{  $invoice->total_amount - $invoice->paid_amount }}</span>
+                        </p>
+                    </div>
                 </div>
             </div>
             <!-- end card -->
@@ -181,7 +190,11 @@
     </div>
     <div class="row">
         <div class="text-end mb-3">
-            <button type="submit" class="btn btn-success w-sm">@lang('dashboard.save')</button>
+            @if ($invoice->status == App\Enum\InvoiceStatus::CANCELED->value)
+                <button type="submit" class="btn btn-success w-sm d-none" id="save_invoice">@lang('dashboard.save')</button>
+            @else
+                <button type="submit" class="btn btn-success w-sm" id="save_invoice">@lang('dashboard.save')</button>
+            @endif
         </div>
     </div>
 </form>
@@ -350,7 +363,7 @@
 @section('custom-js')
     <script src="{{ asset('back/js/invoices.js') }}"></script>
     <script>
-        const invoice_status = "{{ $invoice->status }}"
+        let invoice_status = "{{ $invoice->status }}"
 
         const service_table = $("#services_table").DataTable({
             lengthChange: false,
@@ -393,8 +406,9 @@
             searching: false,
             info: false,
             columnDefs: [
-                {orderable: false, targets: -1}
-            ]
+                {orderable: false, targets: "_all"}
+            ],
+            order: [[1, "asc"]]
         })
 
         $(document).ready(function() {
