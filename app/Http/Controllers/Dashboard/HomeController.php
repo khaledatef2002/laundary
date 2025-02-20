@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\enum\InvoiceStatus;
+use App\Enum\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\InvoicesService;
