@@ -101,6 +101,7 @@ return [
     'select.choose-option' => 'Choose Option',
     'delete_message' => 'This record has been deleted successfully!',
     'update_message' => 'Your changes has been saved successfully',
+    'create_message' => 'This record has been created successfully',
 
     // login
     'welcome_back' => 'Welcome Back',

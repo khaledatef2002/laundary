@@ -46,7 +46,12 @@ $("#create-client-form").submit(function(e){
         contentType: false,
         processData: false,
         success: function(response) {
-            window.location = response.redirectUrl
+            Swal.fire({
+                text: lang.create_message,
+                icon: "success"
+            });
+            $("input").val("")
+            $("textarea").val("")
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;

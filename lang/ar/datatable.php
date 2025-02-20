@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'search' => 'Search',
-    'show' => 'Show',
-    'entries' => 'entries',
-    'showing' => 'Showing',
-    'to' => 'to',
-    'of' => 'of',
-    'records' => 'records',
-    'first' => 'First',
-    'last' => 'Last',
-    'next' => 'Next',
-    'previous' => 'Prev',
-    'empty' => 'Empty Table',
-    'zero' => 'No matching records found'
+    'search' => 'بحث',
+    'show' => 'عرض',
+    'entries' => 'مدخلات',
+    'showing' => 'يتم عرض',
+    'to' => 'إلى',
+    'of' => 'من',
+    'records' => 'سجلات',
+    'first' => 'الأول',
+    'last' => 'الأخير',
+    'next' => 'التالي',
+    'previous' => 'السابق',
+    'empty' => 'جدول فارغ',
+    'zero' => 'لم يتم العثور على سجلات مطابقة'
 ];

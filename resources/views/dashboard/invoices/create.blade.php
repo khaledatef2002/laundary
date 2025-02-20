@@ -92,15 +92,15 @@
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
-                    <div class="d-flex gap-2">
-                        <input type="number" step="1" min="1" value="1" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
-                    </div>
-                </div>
-                <div class="flex-fill mb-3">
                     <label class="form-label" for="price">@lang('dashboard.price')</label>
                     <div class="d-flex gap-2">
                         <input type="number" step="0.01" min="1" value="0" class="form-control" id="price" name="price" placeholder="@lang('dashboard.price')">
+                    </div>
+                </div>
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" step="1" min="1" value="1" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
                     </div>
                 </div>
                 <div class="flex-fill mb-3">
@@ -145,15 +145,15 @@
                     </select>
                 </div>
                 <div class="flex-fill mb-3">
-                    <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
-                    <div class="d-flex gap-2">
-                        <input type="number" step="1" min="1" value="1" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
-                    </div>
-                </div>
-                <div class="flex-fill mb-3">
                     <label class="form-label" for="price">@lang('dashboard.price')</label>
                     <div class="d-flex gap-2">
                         <input type="number" step="0.01" min="1" value="0" class="form-control" id="price" name="price" placeholder="@lang('dashboard.price')">
+                    </div>
+                </div>
+                <div class="flex-fill mb-3">
+                    <label class="form-label" for="quantity">@lang('dashboard.quantity')</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" step="1" min="1" value="1" class="form-control" id="quantity" name="quantity" placeholder="@lang('dashboard.quantity')">
                     </div>
                 </div>
                 <div class="flex-fill mb-3">

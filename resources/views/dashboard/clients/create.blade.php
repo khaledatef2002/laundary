@@ -22,7 +22,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="form-label" for="name">@lang('dashboard.name')</label>
+                        <label class="form-label" for="name">@lang('dashboard.name')<span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="name" name="name" placeholder="@lang('dashboard.name')">
                     </div>
                     <div class="mb-3">
@@ -30,11 +30,11 @@
                         <input type="text" class="form-control" id="email" name="email" placeholder="@lang('dashboard.email')">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="phone">@lang('dashboard.phone')</label>
+                        <label class="form-label" for="phone">@lang('dashboard.phone')<span class="text-danger">*</span></label>
                         <input type="phone" class="form-control" id="phone" name="phone" placeholder="@lang('dashboard.phone')">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="address">@lang('dashboard.address')</label>
+                        <label class="form-label" for="address">@lang('dashboard.address')<span class="text-danger">*</span></label>
                         <textarea class="form-control" id="address" name="address" placeholder="@lang('dashboard.address')"></textarea>
                     </div>
                 </div>
@@ -57,6 +57,7 @@
         const lang = {
             'delete_message': '@lang("dashboard.delete_message")',
             'update_message': '@lang("dashboard.update_message")',
+            'create_message': '@lang("dashboard.create_message")',
         }
     </script>
     <script src="{{ asset('back/js/clients.js') }}"></script>

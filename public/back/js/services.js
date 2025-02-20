@@ -46,7 +46,12 @@ $("#create-service-form").submit(function(e){
         contentType: false,
         processData: false,
         success: function(response) {
-            window.location = response.redirectUrl
+            $("input").val("")
+            submit_button.prop("disabled", false)
+            Swal.fire({
+                text: lang.create_message,
+                icon: "success"
+            });
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;
