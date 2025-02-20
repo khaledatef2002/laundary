@@ -25,7 +25,8 @@ return new class extends Migration
             $table->enum('discount_type', [DiscountType::FIXED->value, DiscountType::PERCENTAGE->value]);
 
             $table->enum('status', 
-                [InvoiceStatus::DRAFT->value, 
+                [
+                InvoiceStatus::DRAFT->value, 
                 InvoiceStatus::CANCELED->value, 
                 InvoiceStatus::PAID->value, 
                 InvoiceStatus::UNPAID->value, 
