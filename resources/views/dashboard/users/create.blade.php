@@ -22,16 +22,16 @@
             <div class="card">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label class="form-label" for="full_name">@lang('custom.full-name')</label>
-                        <input type="text" class="form-control" id="full_name" name="name" placeholder="@lang('custom.full-name')">
+                        <label class="form-label" for="full_name">@lang('dashboard.full-name')</label>
+                        <input type="text" class="form-control" id="full_name" name="name" placeholder="@lang('dashboard.full-name')">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="email">@lang('custom.email')</label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="@lang('custom.email')">
+                        <label class="form-label" for="email">@lang('dashboard.email')</label>
+                        <input type="text" class="form-control" id="email" name="email" placeholder="@lang('dashboard.email')">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="password">@lang('custom.password')</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="@lang('custom.password')">
+                        <label class="form-label" for="password">@lang('dashboard.password')</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="@lang('dashboard.password')">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="role">Role:</label>
@@ -58,5 +58,11 @@
 @endsection
 
 @section('custom-js')
+    <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+        }
+    </script>
     <script src="{{ asset('back/js/users.js') }}"></script>
 @endsection

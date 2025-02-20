@@ -14,7 +14,7 @@ function remove(form) {
         processData: false,
         success: function(response) {
             Swal.fire({
-                text: "This service has been deleted successfully!",
+                text: lang.delete_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)
@@ -77,7 +77,7 @@ $("#edit-service-form").submit(function(e){
         processData: false,
         success: function(response) {
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)

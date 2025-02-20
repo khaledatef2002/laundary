@@ -361,6 +361,18 @@
 @endsection
 
 @section('custom-js')
+    <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+            'cancel_invoice_title': '@lang("dashboard.cancel_invoice_title")',
+            'cancel_invoice_text': '@lang("dashboard.cancel_invoice_text")',
+            'draft_invoice_title': '@lang("dashboard.draft_invoice_title")',
+            'draft_invoice_text': '@lang("dashboard.draft_invoice_text")',
+            'by_applying': '@lang("dashboard.by_applying")',
+            'which_is_more': '@lang("dashboard.which_is_more")',
+        }
+    </script>
     <script src="{{ asset('back/js/invoices.js') }}"></script>
     <script>
         let invoice_status = "{{ $invoice->status }}"
@@ -371,7 +383,20 @@
             info: false,
             columnDefs: [
                 {orderable: false, targets: -1}
-            ]
+            ],
+            language: {
+                search: "@lang('datatable.search')",
+                lengthMenu: "@lang('datatable.show') _MENU_ @lang('datatable.entries')",
+                info: "@lang('datatable.showing') _START_ @lang('datatable.to') _END_ @lang('datatable.of') _TOTAL_ @lang('datatable.records')",
+                paginate: {
+                    first: "@lang('datatable.first')",
+                    last: "@lang('datatable.last')",
+                    next: "@lang('datatable.next')",
+                    previous: "@lang('datatable.previous')"
+                },
+                emptyTable: "@lang('datatable.empty')",
+                zeroRecords: "@lang('datatable.zero')",
+            }
         })
 
         const service_select_common_data = {
@@ -408,7 +433,20 @@
             columnDefs: [
                 {orderable: false, targets: "_all"}
             ],
-            order: [[1, "asc"]]
+            order: [[1, "asc"]],
+            language: {
+                search: "@lang('datatable.search')",
+                lengthMenu: "@lang('datatable.show') _MENU_ @lang('datatable.entries')",
+                info: "@lang('datatable.showing') _START_ @lang('datatable.to') _END_ @lang('datatable.of') _TOTAL_ @lang('datatable.records')",
+                paginate: {
+                    first: "@lang('datatable.first')",
+                    last: "@lang('datatable.last')",
+                    next: "@lang('datatable.next')",
+                    previous: "@lang('datatable.previous')"
+                },
+                emptyTable: "@lang('datatable.empty')",
+                zeroRecords: "@lang('datatable.zero')",
+            }
         })
 
         $(document).ready(function() {

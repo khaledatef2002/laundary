@@ -23,16 +23,16 @@
             <div class="card">
                 <div class="card-body">
                     <div class="mb-3 flex-fill">
-                        <label class="form-label" for="full_name">@lang('custom.full-name')</label>
-                        <input type="text" class="form-control" value="{{ $user->name }}" id="full_name" name="name" placeholder="@lang('custom.enter-first-name')">
+                        <label class="form-label" for="full_name">@lang('Dashboard.full-name')</label>
+                        <input type="text" class="form-control" value="{{ $user->name }}" id="full_name" name="name" placeholder="@lang('Dashboard.enter-first-name')">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label" for="email">@lang('custom.email')</label>
-                        <input type="text" class="form-control" value="{{ $user->email }}" id="email" name="email" placeholder="@lang('custom.email')">
+                        <label class="form-label" for="email">@lang('Dashboard.email')</label>
+                        <input type="text" class="form-control" value="{{ $user->email }}" id="email" name="email" placeholder="@lang('Dashboard.email')">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="password">@lang('dashboard.users.new-password')</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="@lang('custom.password')">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="@lang('Dashboard.password')">
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="role">Role:</label>
@@ -59,5 +59,11 @@
 @endsection
 
 @section('custom-js')
+    <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+        }
+    </script>
     <script src="{{ asset('back/js/users.js') }}"></script>
 @endsection

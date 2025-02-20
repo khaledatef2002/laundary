@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.guest')
 
-@section('title', __('custom.login'))
+@section('title', __('dashboard.login'))
 
 @section('content')
 
@@ -20,28 +20,28 @@
                 <div class="card w-100 mt-5">
                     <div class="card-body py-4">
                         <div class="text-center mt-2">
-                            <h5 class="text-primary">Welcome Back !</h5>
-                            <p class="text-muted">Sign in to continue to Dashboard.</p>
+                            <h5 class="text-primary">@lang('dashboard.welcome_back') !</h5>
+                            <p class="text-muted">@lang('dashboard.sign_in_to')</p>
                         </div>
                         <form id="login-form" action="{{ route('dashboard.login') }}" method="post" style="position: relative;z-index: 1;">
                             @csrf
                             <div class="input-group d-flex flex-column mb-3">
-                                <label for="email" class="fw-bold">@lang('custom.email')</label>
-                                <input id="email" name="email" value="{{ old('email') }}" class="form-control w-100" type="email" placeholder="@lang('custom.enter-email')">
+                                <label for="email" class="fw-bold">@lang('dashboard.email')</label>
+                                <input id="email" name="email" value="{{ old('email') }}" class="form-control w-100" type="email" placeholder="@lang('dashboard.enter-email')">
                             </div>
                             <div class="input-group d-flex flex-column mb-3">
-                                <label for="password" class="fw-bold">@lang('custom.password')</label>
+                                <label for="password" class="fw-bold">@lang('dashboard.password')</label>
                                 <div class="input-holder position-relative d-flex justify-content-end">
                                     <i class="fa-solid fa-eye me-2"></i>
-                                    <input id="password" name="password" class="form-control" type="password" placeholder="@lang('custom.enter-password')">
+                                    <input id="password" name="password" class="form-control" type="password" placeholder="@lang('dashboard.enter-password')">
                                 </div>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="remember" value="1" id="auth-remember-check" role="button">
-                                <label class="form-check-label" for="auth-remember-check" role="button">@lang('custom.login.keep')</label>
+                                <label class="form-check-label" for="auth-remember-check" role="button">@lang('dashboard.login.keep')</label>
                             </div>
                             <div class="mt-4">
-                                <button class="btn btn-primary w-100" type="submit">@lang('custom.login')</button>
+                                <button class="btn btn-primary w-100" type="submit">@lang('dashboard.login')</button>
                             </div>
                         </form>
                     </div>

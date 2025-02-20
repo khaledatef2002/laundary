@@ -14,7 +14,7 @@ function remove(form) {
         processData: false,
         success: function(response) {
             Swal.fire({
-                text: "This invoice has been deleted successfully!",
+                text: lang.delete_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)
@@ -179,7 +179,7 @@ $("#edit-invoice-form").submit(function(e){
             }
 
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             
@@ -398,7 +398,7 @@ document.querySelector('#AddServiceModal button.save-add-new')?.addEventListener
             service_table.row.add(row_data).draw(false)
             
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)
@@ -523,7 +523,7 @@ document.querySelector('#EditServiceModal button.save')?.addEventListener('click
             row.data(rowData).draw()
 
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)
@@ -545,12 +545,13 @@ document.querySelector('#EditServiceModal button.save')?.addEventListener('click
 $("#cancel_button").click(function(){
     let button = $(this)
     Swal.fire({
-        title: "Do you really want to cancel this invoice?",
-        text: "All payment history will be lost!",
+        title: lang.cancel_invoice_title,
+        text: lang.cancel_invoice_text,
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Cancel",
+        confirmButtonText: "Confirm",
         confirmButtonColor: "red",
+        cancelButtonText: "Cancel",
     }).then((result) => {
         if (result.isConfirmed) {
             const invoice_id = $("#edit-invoice-form").attr("data-id")
@@ -582,8 +583,8 @@ $("#cancel_button").click(function(){
 $("#draft_button").click(function(){
     let button = $(this)
     Swal.fire({
-        title: "Do you really want to set this invoice as draft?",
-        text: "All payment history will be lost!",
+        title: lang.draft_invoice_title,
+        text: lang.draft_invoice_text,
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Draft",
@@ -686,7 +687,7 @@ document.querySelector('#AddPaymentModal button.save')?.addEventListener('click'
             if(total_required < total_before + Number(amount))
             {
                 Swal.fire({
-                    text: `By applying these changes the total paid amount will be ${total_before + Number(amount)} which is more than needed.`,
+                    text: `${lang.by_applying} ${total_before + Number(amount)} ${lang.which_is_more}`,
                     icon: "error"
                 });
 
@@ -709,7 +710,7 @@ document.querySelector('#AddPaymentModal button.save')?.addEventListener('click'
 
             AddPaymentModal.hide()
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)
@@ -783,7 +784,7 @@ document.querySelector('#EditPaymentModal button.save')?.addEventListener('click
             if(total_required < total_before + Number(amount))
             {
                 Swal.fire({
-                    text: `By applying these changes the total paid amount will be ${total_before + Number(amount)} which is more than needed.`,
+                    text: `${lang.by_applying} ${total_before + Number(amount)} ${lang.which_is_more}`,
                     icon: "error"
                 });
 
@@ -797,7 +798,7 @@ document.querySelector('#EditPaymentModal button.save')?.addEventListener('click
             row.data(rowData).draw()
 
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)

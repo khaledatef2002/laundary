@@ -15,7 +15,7 @@ $("#edit-system_setting-form").submit(function(e){
         processData: false,
         success: function(response) {
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)

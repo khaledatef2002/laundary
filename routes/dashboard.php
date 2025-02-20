@@ -33,12 +33,13 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
                     ->name($invoice->invoice_number . ".pdf");
         })->name('invoice.template.download');
 
+        Route::get('/load_kpis', [HomeController::class, 'render_kpis']);
+
         Route::resource('clients', ClientsController::class)->except('show');
         Route::resource('users', UsersController::class)->except('show');
         Route::resource('roles', RolesController::class)->except('show');
         Route::resource('system_settings', SystemSettingsController::class)->only(['edit', 'update']);
 
-        // Select 2
         Route::prefix('/select2')->name('select2.')->group(function(){
             Route::get('/clients', [select2::class, 'clients'])->name('clients');
             Route::get('/services', [select2::class, 'services'])->name('services');

@@ -14,8 +14,8 @@ function remove(form) {
         processData: false,
         success: function(response) {
             Swal.fire({
-                text: "This client has been deleted successfully!",
-                icon: "success"
+                text: lang.delete_message,
+                icon: "success",
             });
             submit_button.prop("disabled", false)
             table.ajax.reload(null, false)
@@ -77,7 +77,7 @@ $("#edit-client-form").submit(function(e){
         processData: false,
         success: function(response) {
             Swal.fire({
-                text: "Your changes has been saved successfully",
+                text: lang.update_message,
                 icon: "success"
             });
             submit_button.prop("disabled", false)

@@ -24,14 +24,14 @@
                 <div class="card-body">
                     @foreach (LaravelLocalization::getSupportedLocales() as $key => $lang)
                         <div class="mb-3">
-                            <label class="form-label" for="title:{{ $key }}">@lang('custom.' . $key . '.title')</label>
-                        <input type="text" class="form-control" id="title:{{ $key }}" name="{{ $key }}[title]" placeholder="@lang('custom.' . $key . '.title')" value="{{ $service->translate($key)?->title }}">
+                            <label class="form-label" for="title:{{ $key }}">@lang('dashboard.' . $key . '.title')</label>
+                        <input type="text" class="form-control" id="title:{{ $key }}" name="{{ $key }}[title]" placeholder="@lang('dashboard.' . $key . '.title')" value="{{ $service->translate($key)?->title }}">
                         </div>
                     @endforeach
 
                     <div class="mb-3">
-                        <label class="form-label" for="price">@lang('custom.price')</label>
-                        <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" placeholder="@lang('custom.price')" value="{{ $service->price }}">
+                        <label class="form-label" for="price">@lang('dashboard.price')</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" placeholder="@lang('dashboard.price')" value="{{ $service->price }}">
                     </div>
                 </div>
             </div>
@@ -49,5 +49,11 @@
 @endsection
 
 @section('custom-js')
+    <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+        }
+    </script>
     <script src="{{ asset('back/js/services.js') }}"></script>
 @endsection

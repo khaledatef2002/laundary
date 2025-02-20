@@ -70,11 +70,11 @@ class InvoicesController extends Controller implements HasMiddleware
             ->editColumn('status', function(Invoice $invoice){
                 return match($invoice->status)
                 {
-                    InvoiceStatus::DRAFT->value => "<span class='badge bg-dark'>". _('dashboard.draft') ."</span>",
-                    InvoiceStatus::PAID->value => "<span class='badge bg-success'>". _('dashboard.paid') ."</span>",
-                    InvoiceStatus::UNPAID->value => "<span class='badge bg-secondary'>". _('dashboard.unpaid') ."</span>",
-                    InvoiceStatus::PARTIALLY_PAID->value => "<span class='badge bg-warning'>". _('dashboard.partially_paid') ."</span>",
-                    InvoiceStatus::CANCELED->value => "<span class='badge bg-danger'>". _('dashboard.canceled') ."</span>",
+                    InvoiceStatus::DRAFT->value => "<span class='badge bg-dark'>". __('dashboard.draft') ."</span>",
+                    InvoiceStatus::PAID->value => "<span class='badge bg-success'>". __('dashboard.paid') ."</span>",
+                    InvoiceStatus::UNPAID->value => "<span class='badge bg-secondary'>". __('dashboard.unpaid') ."</span>",
+                    InvoiceStatus::PARTIALLY_PAID->value => "<span class='badge bg-warning'>". __('dashboard.partially_paid') ."</span>",
+                    InvoiceStatus::CANCELED->value => "<span class='badge bg-danger'>". __('dashboard.canceled') ."</span>",
                 };
             })
             ->editColumn('due_date', function(Invoice $invoice){
@@ -314,7 +314,7 @@ class InvoicesController extends Controller implements HasMiddleware
                 }
 
                 return response()->json([
-                    'text' => _('dashboard.unpaid'),
+                    'text' => __('dashboard.unpaid'),
                     'status' => InvoiceStatus::UNPAID->value,
                     'overtime'=> $overtime
                 ]);
@@ -330,7 +330,7 @@ class InvoicesController extends Controller implements HasMiddleware
                 }
 
                 return response()->json([
-                    'text' => _('dashboard.partially_paid'),
+                    'text' => __('dashboard.partially_paid'),
                     'status' => InvoiceStatus::PARTIALLY_PAID->value,
                     'overtime'=> $overtime
                 ]);
@@ -340,7 +340,7 @@ class InvoicesController extends Controller implements HasMiddleware
                 $new_invoice_data->status = InvoiceStatus::PAID->value;
                 $new_invoice_data->save();
                 return response()->json([
-                    'text' => _('dashboard.paid'),
+                    'text' => __('dashboard.paid'),
                     'status' => InvoiceStatus::PAID->value,
                     'overtime' => false
                 ]);

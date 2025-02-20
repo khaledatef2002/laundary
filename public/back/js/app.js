@@ -14,7 +14,7 @@ File: Main Js File
 	 *  global variables
 	 */
 	var navbarMenuHTML = document.querySelector(".navbar-menu").innerHTML;
-	var horizontalMenuSplit = 7; // after this number all horizontal menus will be moved in More menu options
+	var horizontalMenuSplit = 9; // after this number all horizontal menus will be moved in More menu options
 
 	function pluginData() {
 		/**

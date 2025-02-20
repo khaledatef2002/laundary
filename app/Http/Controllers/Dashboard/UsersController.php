@@ -59,12 +59,9 @@ class UsersController extends Controller implements HasMiddleware
             ->editColumn('user', function(User $user){
                 return "
                     <div class='d-flex align-items-center gap-2'>
-                        <span>{$user->name} ". (Auth::id() == $user->id ? '(You)' : '') ."</span>
+                        <span>{$user->name} ". (Auth::id() == $user->id ? '('. __('dashboard.you') .')' : '') ."</span>
                     </div>
                 ";
-            })
-            ->editColumn('is_admin', function(User $user){
-                return $user->is_admin ? '<span class="badge bg-success">'. __("dashboard.admin") .'</span>' : '<span class="badge bg-danger">'. __("dashboard.not-admin") .'</span>';
             })
             ->editColumn('phone', function(User $user){
                 return "+" . $user->country_code . $user->phone;
@@ -72,7 +69,7 @@ class UsersController extends Controller implements HasMiddleware
             ->editColumn('role', function(User $user){
                 return'<span class="badge bg-primary">'. $user->getRoleNames()[0] .'</span>';
             })
-            ->rawColumns(['user', 'is_admin', 'role', 'action'])
+            ->rawColumns(['user', 'role', 'action'])
             ->make(true);
         }
         return view('dashboard.users.index');

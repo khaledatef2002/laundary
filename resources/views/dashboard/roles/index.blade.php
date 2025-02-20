@@ -34,6 +34,12 @@
 @endsection
 
 @section('custom-js')
+    <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+        }
+    </script>
     <script src="{{ asset('back/js/roles.js') }}"></script>
     <script>
         var table
@@ -47,7 +53,20 @@
                             { data: 'name', name: 'name' },
                             { data: 'users', name: 'users' },
                             { data: 'action', name: 'action'}
-                        ]
+                        ],
+                language: {
+                    search: "@lang('datatable.search')",
+                    lengthMenu: "@lang('datatable.show') _MENU_ @lang('datatable.entries')",
+                    info: "@lang('datatable.showing') _START_ @lang('datatable.to') _END_ @lang('datatable.of') _TOTAL_ @lang('datatable.records')",
+                    paginate: {
+                        first: "@lang('datatable.first')",
+                        last: "@lang('datatable.last')",
+                        next: "@lang('datatable.next')",
+                        previous: "@lang('datatable.previous')"
+                    },
+                    emptyTable: "@lang('datatable.empty')",
+                    zeroRecords: "@lang('datatable.zero')",
+                }
             });
         });
     </script>

@@ -26,12 +26,12 @@
                             <div class="avatar-title bg-light rounded">
                                 <img src="{{ asset($system_setting->logo) }}" id="product-img" style="min-height: 100%;min-width: 100%;" />
                             </div>
-                            <span class="text-muted text-center d-block">Logo</span>
+                            <span class="text-muted text-center d-block">@lang('dashboard.logo')</span>
                         </div>
                     </div>
                     <div class="mt-3 flex-fill">
-                        <label class="form-label" for="title">@lang('custom.title')</label>
-                        <input type="text" class="form-control" value="{{ $system_setting->title }}" id="title" name="title" placeholder="@lang('custom.title')">
+                        <label class="form-label" for="title">@lang('dashboard.title')</label>
+                        <input type="text" class="form-control" value="{{ $system_setting->title }}" id="title" name="title" placeholder="@lang('dashboard.title')">
                     </div>
                 </div>
             </div>
@@ -51,5 +51,11 @@
 @endsection
 
 @section('custom-js')
+    <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+        }
+    </script>
     <script src="{{ asset('back/js/system_settings.js') }}"></script>
 @endsection

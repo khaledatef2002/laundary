@@ -39,6 +39,16 @@
 @section('custom-js')
     <script src="{{ asset('back/js/invoices.js') }}"></script>
     <script>
+        const lang = {
+            'delete_message': '@lang("dashboard.delete_message")',
+            'update_message': '@lang("dashboard.update_message")',
+            'cancel_invoice_title': '@lang("dashboard.cancel_invoice_title")',
+            'cancel_invoice_text': '@lang("dashboard.cancel_invoice_text")',
+            'draft_invoice_title': '@lang("dashboard.draft_invoice_title")',
+            'draft_invoice_text': '@lang("dashboard.draft_invoice_text")',
+            'by_applying': '@lang("dashboard.by_applying")',
+            'which_is_more': '@lang("dashboard.which_is_more")',
+        }
         var table
         $(document).ready( function () {
             table = $('#dataTables').DataTable({
@@ -52,7 +62,20 @@
                             { data: 'status', name: 'status' },
                             { data: 'due_date', name: 'due_date' },
                             { data: 'action', name: 'action'}
-                        ]
+                        ],
+                language: {
+                    search: "@lang('datatable.search')",
+                    lengthMenu: "@lang('datatable.show') _MENU_ @lang('datatable.entries')",
+                    info: "@lang('datatable.showing') _START_ @lang('datatable.to') _END_ @lang('datatable.of') _TOTAL_ @lang('datatable.records')",
+                    paginate: {
+                        first: "@lang('datatable.first')",
+                        last: "@lang('datatable.last')",
+                        next: "@lang('datatable.next')",
+                        previous: "@lang('datatable.previous')"
+                    },
+                    emptyTable: "@lang('datatable.empty')",
+                    zeroRecords: "@lang('datatable.zero')",
+                }
             });
         });
     </script>

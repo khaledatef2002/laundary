@@ -9,7 +9,7 @@ class Invoice extends Model
 {
     protected $guarded = ['id', 'invoice_number'];
 
-    protected $appends = ['discount_amount', 'total_amount'];
+    protected $appends = ['discount_amount', 'total_amount', 'paid_amount'];
 
     protected static function boot()
     {
