@@ -32,7 +32,7 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
             return Pdf::view('dashboard.templates.invoice', compact('invoice'))
                     ->withBrowsershot(function(Browsershot $browsershot){
                         $browsershot->setNodeBinary('/opt/nodejs/bin/node')
-                        ->setNpmBinary('/root/.nvm/versions/node/v16.20.2/bin/npm');
+                        ->setNpmBinary('/opt/nodejs/bin/npm');
                     })
                     ->format(Format::A5)
                     ->name($invoice->invoice_number . ".pdf");
