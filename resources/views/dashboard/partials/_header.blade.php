@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <!-- LOGO -->
                 <div class="navbar-brand-box horizontal-logo">
-                    <a href="index" class="logo logo-dark">
+                    <a href="{{ route('dashboard.index') }}" class="logo logo-dark">
                         <span class="logo-sm">
                             <img src="{{ asset($settings->logo) }}" alt="" height="40">
                         </span>
@@ -13,7 +13,7 @@
                         </span>
                     </a>
 
-                    <a href="index" class="logo logo-light">
+                    <a href="{{ route('dashboard.index') }}" class="logo logo-light">
                         <span class="logo-sm">
                             <img src="{{ asset($settings->logo) }}" alt="" height="40">
                         </span>

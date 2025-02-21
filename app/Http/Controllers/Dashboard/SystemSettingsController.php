@@ -43,9 +43,9 @@ class SystemSettingsController extends Controller implements HasMiddleware
 
         if($request->file('logo'))
         {
-            if($system_setting->logo && Storage::disk('public')->exists($system_setting->logo))
+            if($system_setting->logo && Storage::exists($system_setting->logo))
             {
-                Storage::disk('public')->delete($system_setting->logo);
+                Storage::delete($system_setting->logo);
             }
 
             $image = $request->file('logo');

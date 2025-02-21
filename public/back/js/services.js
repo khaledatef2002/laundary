@@ -46,7 +46,7 @@ $("#create-service-form").submit(function(e){
         contentType: false,
         processData: false,
         success: function(response) {
-            $("input").val("")
+            $("input:not([name='_token'])").val("")
             submit_button.prop("disabled", false)
             Swal.fire({
                 text: lang.create_message,

@@ -50,8 +50,9 @@ $("#create-client-form").submit(function(e){
                 text: lang.create_message,
                 icon: "success"
             });
-            $("input").val("")
+            $("input:not([name='_token'])").val("")
             $("textarea").val("")
+            submit_button.prop("disabled", false)
         },
         error: function(xhr) {
             var errors = xhr.responseJSON.errors;

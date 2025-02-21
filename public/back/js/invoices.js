@@ -424,7 +424,7 @@ function calculate_total()
     service_table.rows().every(function(){
         const data = this.data();
 
-        total += data[4];
+        total += Number(data[4]);
     })
 
     const discount = $("form input[name='discount']").val() ?? 0
