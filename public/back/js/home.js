@@ -10,7 +10,7 @@ function load_invoices_pi_chart()
             type: 'doughnut',
             data: {
                 labels: [
-                    lang.draft, lang.unpaid, lang.partially_paid, lang.Paid
+                    lang.draft, lang.unpaid, lang.partially_paid, lang.paid
                 ],
                 datasets: [{
                     label: lang.count,
