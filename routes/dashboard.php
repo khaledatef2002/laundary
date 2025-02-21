@@ -31,8 +31,8 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
         Route::get('/invoice/{invoice}/download', function(Invoice $invoice){
             return Pdf::view('dashboard.templates.invoice', compact('invoice'))
                     ->withBrowsershot(function(Browsershot $browsershot){
-                        $browsershot->setNodeBinary('/usr/local/bin/node')
-                        ->setNpmBinary('/usr/local/bin/npm');
+                        $browsershot->setNodeBinary('/root/.nvm/versions/node/v16.20.2/bin/node')
+                        ->setNpmBinary('/root/.nvm/versions/node/v16.20.2/bin/npm');
                     })
                     ->format(Format::A5)
                     ->name($invoice->invoice_number . ".pdf");
