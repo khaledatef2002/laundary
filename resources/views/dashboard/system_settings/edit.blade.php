@@ -33,6 +33,10 @@
                         <label class="form-label" for="title">@lang('dashboard.title')</label>
                         <input type="text" class="form-control" value="{{ $system_setting->title }}" id="title" name="title" placeholder="@lang('dashboard.title')">
                     </div>
+                    <div class="mt-3 flex-fill">
+                        <label class="form-label" for="description">@lang('dashboard.description')</label>
+                        <textarea class="form-control" id="description" name="description" placeholder="@lang('dashboard.description')">{{ $system_setting->description }}</textarea>
+                    </div>
                 </div>
             </div>
             <!-- end card -->

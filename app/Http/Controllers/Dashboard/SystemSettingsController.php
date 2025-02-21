@@ -36,6 +36,7 @@ class SystemSettingsController extends Controller implements HasMiddleware
     {
         $rules = [
             'title' => ['required', 'min:2', 'max:255'],
+            'description' => ['required']
         ];
         $request->file('logo') ? ($rules['logo'] = ['image', 'mimes:jpeg,png,jpg|max:10240']) : '';
 
