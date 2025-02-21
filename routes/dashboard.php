@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard\{ClientsController, HomeController, InvoicesC
 use App\Models\Invoice;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Spatie\Browsershot\Browsershot;
 use Spatie\LaravelPdf\Enums\Format;
 use Spatie\LaravelPdf\Facades\Pdf;
 
@@ -29,6 +30,10 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
 
         Route::get('/invoice/{invoice}/download', function(Invoice $invoice){
             return Pdf::view('dashboard.templates.invoice', compact('invoice'))
+                    ->withBrowsershot(function(Browsershot $browsershot){
+                        $browsershot->setNodeBinary('/usr/local/bin/node')
+                        ->setNpmBinary('/usr/local/bin/npm');
+                    })
                     ->format(Format::A5)
                     ->name($invoice->invoice_number . ".pdf");
         })->name('invoice.template.download');
