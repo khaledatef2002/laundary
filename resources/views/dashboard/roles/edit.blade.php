@@ -120,8 +120,8 @@
                                         </label>
                                     </div>
                                     <div class="form-check">
-                                        <input name="permission[]" class="form-check-input" type="checkbox" id="{{ \App\Enum\PermissionsType::clients_create->value }}" value="{{ \App\Enum\PermissionsType::clients_create->value }}" {{ $role->hasPermissionTo(\App\Enum\PermissionsType::clients_create->value) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="{{ \App\Enum\PermissionsType::clients_create->value }}">
+                                        <input name="permission[]" class="form-check-input" type="checkbox" id="{{ \App\Enum\PermissionsType::invoices_create->value }}" value="{{ \App\Enum\PermissionsType::invoices_create->value }}" {{ $role->hasPermissionTo(\App\Enum\PermissionsType::invoices_create->value) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="{{ \App\Enum\PermissionsType::invoices_create->value }}">
                                             @lang('dashboard.create')
                                         </label>
                                     </div>
