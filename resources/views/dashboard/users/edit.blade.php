@@ -63,6 +63,7 @@
         const lang = {
             'delete_message': '@lang("dashboard.delete_message")',
             'update_message': '@lang("dashboard.update_message")',
+            'create_message': '@lang("dashboard.create_message")',
         }
     </script>
     <script src="{{ asset('back/js/users.js') }}"></script>

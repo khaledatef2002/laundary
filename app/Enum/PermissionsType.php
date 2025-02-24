@@ -38,4 +38,7 @@ enum PermissionsType: string
     // System 
     case system_settings_show = 'system_settings_show';
     case system_settings_edit = 'system_settings_edit';
+
+    // KPIS
+    case kpis_show = 'kpis_show';
 }

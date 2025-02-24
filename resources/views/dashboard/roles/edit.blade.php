@@ -202,6 +202,17 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>@lang('dashboard.kpis')</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input name="permission[]" class="form-check-input" type="checkbox" id="{{ \App\Enum\PermissionsType::kpis_show->value }}" value="{{ \App\Enum\PermissionsType::kpis_show->value }}" {{ $role->hasPermissionTo(\App\Enum\PermissionsType::kpis_show->value) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="{{ \App\Enum\PermissionsType::kpis_show->value }}">
+                                            @lang('dashboard.show')
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -224,6 +235,7 @@
         const lang = {
             'delete_message': '@lang("dashboard.delete_message")',
             'update_message': '@lang("dashboard.update_message")',
+            'create_message': '@lang("dashboard.create_message")',
         }
     </script>
     <script src="{{ asset('back/js/roles.js') }}"></script>

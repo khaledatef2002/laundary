@@ -8,7 +8,7 @@
         <!-- App favicon -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
     
-        <link rel="shortcut icon" href="{{ asset($settings->logo) }}">
+        <link rel="icon" href="{{ asset($settings->logo) }}">
         
         {{-- RTL FILES --}}
         @if (LaravelLocalization::getCurrentLocaleDirection() == 'rtl')

@@ -34,10 +34,10 @@ Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard
                         $browsershot->setNodeBinary('/opt/nodejs/bin/node')
                         ->setNpmBinary('/opt/nodejs/bin/npm')
                         ->noSandbox();
-                        
                     })
                     ->format(Format::A5)
-                    ->name($invoice->invoice_number . ".pdf");
+                    ->name($invoice->invoice_number . ".pdf")
+                    ->download();
         })->name('invoice.template.download');
 
         Route::get('/load_kpis', [HomeController::class, 'render_kpis']);

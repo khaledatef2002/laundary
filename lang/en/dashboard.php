@@ -110,4 +110,6 @@ return [
     'login' => 'Login',
     'enter-email' => 'Enter Email',
     'enter-password' => 'Enter Password',
+
+    'kpis' => 'KPIS',
 ];
