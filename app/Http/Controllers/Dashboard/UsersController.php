@@ -67,7 +67,10 @@ class UsersController extends Controller implements HasMiddleware
                 return "+" . $user->country_code . $user->phone;
             })
             ->editColumn('role', function(User $user){
-                return'<span class="badge bg-primary">'. $user->getRoleNames()[0] .'</span>';
+                if(isset($user->getRoleNames()[0]))
+                {
+                    return'<span class="badge bg-primary">'. $user->getRoleNames()[0] .'</span>';
+                }
             })
             ->rawColumns(['user', 'role', 'action'])
             ->make(true);
@@ -134,7 +137,7 @@ class UsersController extends Controller implements HasMiddleware
 
         $role = Role::find($request->role);
 
-        $user->assignRole($role->name);
+        $user->syncRoles([$role->name]);
     }
 
     /**

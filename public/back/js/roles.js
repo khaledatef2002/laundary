@@ -12,12 +12,12 @@ $("#create-role-form").submit(function(e){
         contentType: false,
         processData: false,
         success: function(response) {
-            $("input:not([name='_token']):not([type='checkbox')").val("")
-            $("input:not([name='_token'][type=['checkbox']])").prop("checked", false)
+            $("input:not([name='_token']):not([type='checkbox'])").val("")
+            $("input:not([name='_token'][type='checkbox'])").prop("checked", false)
             submit_button.prop("disabled", false)
             Swal.fire({
                 text: lang.create_message,
-                icon: "error"
+                icon: "success"
             });
         },
         error: function(xhr) {

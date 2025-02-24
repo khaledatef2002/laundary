@@ -12,7 +12,7 @@ use Spatie\LaravelPdf\Facades\Pdf;
 Route::name('dashboard.')->prefix(LaravelLocalization::setLocale() . '/dashboard')->middleware(['localeSessionRedirect', 'localizationRedirect', 'localeViewPath'])->group(function(){
     require __DIR__.'/auth.php';
     
-    Route::middleware(['auth'])->group(function(){
+    Route::middleware(['auth', 'hasRole'])->group(function(){
         Route::get('/', [HomeController::class, 'index'])->name('index');
         Route::resource('services', ServicesController::class)->except('show');
 

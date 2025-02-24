@@ -107,4 +107,9 @@ class ClientsController extends Controller implements HasMiddleware
 
         $client->update($data);
     }
+
+    public function destroy(Client $client)
+    {
+        $client->delete();
+    }
 }
