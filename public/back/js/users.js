@@ -47,6 +47,7 @@ $("#create-user-form").submit(function(e){
         processData: false,
         success: function(response) {
             $("input:not([name='_token'])").val("")
+            $("select option:selected").prop("selected", false)
             submit_button.prop("disabled", false)
             Swal.fire({
                 text: lang.create_message,
