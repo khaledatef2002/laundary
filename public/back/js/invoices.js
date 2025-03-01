@@ -286,8 +286,9 @@ document.querySelectorAll('#EditServiceModal input').forEach(input => {
 document.querySelector('#EditServiceModal select#discount_type')?.addEventListener('change', () => calc_edit_service())
 
 document.querySelector('#AddServiceModal button.save')?.addEventListener('click', function() {
-    const service_id = document.querySelector("#AddServiceModal select[name='service_id']").value
-    const service_name = document.querySelector("#AddServiceModal select[name='service_id']").innerText
+    const service_select = document.querySelector("#AddServiceModal select[name='service_id']")
+    const service_id = service_select.value
+    const service_name = service_select.options[service_select.selectedIndex].text
     const quantity = document.querySelector("#AddServiceModal input[name='quantity']").value ?? 0
     const price = document.querySelector("#AddServiceModal input[name='price']").value ?? 0
     const discount = document.querySelector("#AddServiceModal input[name='discount']").value ?? 0
@@ -349,6 +350,7 @@ $('#services_table tbody').on('click', '.remove_service', function () {
     const rowData = row.data();
     
     row.remove().draw(false);
+    calculate_total()
 });
 
 $('#payment_table tbody').on('click', '.remove_payment', function () {
@@ -356,11 +358,14 @@ $('#payment_table tbody').on('click', '.remove_payment', function () {
     const rowData = row.data();
     
     row.remove().draw(false);
+    calculate_total()
+    calculate_paid_remaining()
 });
 
 document.querySelector('#AddServiceModal button.save-add-new')?.addEventListener('click', function() {
-    const service_id = document.querySelector("#AddServiceModal select[name='service_id']").value
-    const service_name = document.querySelector("#AddServiceModal select[name='service_id']").innerText
+    const service_select = document.querySelector("#AddServiceModal select[name='service_id']")
+    const service_id = service_select.value
+    const service_name = service_select.options[service_select.selectedIndex].text
     const quantity = document.querySelector("#AddServiceModal input[name='quantity']").value ?? 0
     const price = document.querySelector("#AddServiceModal input[name='price']").value ?? 0
     const discount = document.querySelector("#AddServiceModal input[name='discount']").value ?? 0

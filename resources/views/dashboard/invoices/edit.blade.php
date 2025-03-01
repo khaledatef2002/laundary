@@ -174,13 +174,15 @@
                         <p class="text-start mb-0 px-2">
                             <span class="fw-bold">Total: </span> <span id="total">{{ $invoice->total_amount }}</span>
                         </p>
-                        <p class="text-start mb-0 px-2">
-                            <span class="fw-bold">Paid: </span> <span id="paid">{{ $invoice->paid_amount }}</span>
-                        </p>
-                        <hr class="my-2">
-                        <p class="text-start px-2">
-                            <span class="fw-bold">Remaining: </span> <span id="remaining">{{  $invoice->total_amount - $invoice->paid_amount }}</span>
-                        </p>
+                        @if (!in_array($invoice->status, [App\Enum\InvoiceStatus::CANCELED->value, App\Enum\InvoiceStatus::DRAFT->value]))
+                            <p class="text-start mb-0 px-2">
+                                <span class="fw-bold">Paid: </span> <span id="paid">{{ $invoice->paid_amount }}</span>
+                            </p>
+                            <hr class="my-2">
+                            <p class="text-start px-2">
+                                <span class="fw-bold">Remaining: </span> <span id="remaining">{{  $invoice->total_amount - $invoice->paid_amount }}</span>
+                            </p>
+                        @endif
                     </div>
                 </div>
             </div>
